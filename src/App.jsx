@@ -9,24 +9,27 @@ import JobPage from './pages/JobPage'
 import PostJob from './pages/PostJob'
 import SavedJob from './pages/SavedJob'
 import MyJob from './pages/MyJob'
+import { ThemeProvider } from './components/ThemeProvider'
 
 function App() {
 
   return (
     <>
-      <Router>
-        <Routes>
-          <Route element={<AppLayout />} >
-            <Route path='/' element={<LandingPage />} />
-            <Route path='/onboarding' element={<OnBoarding />} />
-            <Route path='/jobs' element={<JobListing />} />
-            <Route path='/job/:id' element={<JobPage />} />
-            <Route path='/post-job' element={<PostJob />} />
-            <Route path='/saved-job' element={<SavedJob />} />
-            <Route path='/my-jobs' element={<MyJob />} />
-          </Route>
-        </Routes>
-      </Router>
+      <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
+        <Router>
+          <Routes>
+            <Route element={<AppLayout />} >
+              <Route path='/' element={<LandingPage />} />
+              <Route path='/onboarding' element={<OnBoarding />} />
+              <Route path='/jobs' element={<JobListing />} />
+              <Route path='/job/:id' element={<JobPage />} />
+              <Route path='/post-job' element={<PostJob />} />
+              <Route path='/saved-job' element={<SavedJob />} />
+              <Route path='/my-jobs' element={<MyJob />} />
+            </Route>
+          </Routes>
+        </Router>
+      </ThemeProvider>
     </>
   )
 }
