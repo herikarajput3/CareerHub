@@ -10,12 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.32.1",
+    "@clerk/themes": "^2.2.51",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-radio-group": "^1.3.7",
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.3",
+    "@supabase/supabase-js": "^2.50.2",
     "@tailwindcss/vite": "^4.1.10",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -26,7 +29,6 @@
     "react-hook-form": "^7.58.1",
     "react-router-dom": "^7.6.2",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.1.10",
     "vaul": "^1.1.2"
   },
   "devDependencies": {
@@ -38,6 +40,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.2.0",
+    "tailwindcss": "^4.1.10",
     "tw-animate-css": "^1.3.4",
     "vite": "^6.3.5"
   }
