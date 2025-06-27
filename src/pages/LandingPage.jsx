@@ -21,7 +21,7 @@ const LandingPage = () => {
           <h1 className='flex flex-col justify-center items-center gradient-title text-3xl font-extrabold sm:text-6xl lg:text-8xl tracking-tighter py-4'>
             <span>Discover Opportunities</span>
             <span className="text-xl sm:text-4xl lg:text-5xl mt-3 lg:mt-6 tracking-normal sm:tracking-wide">
-              Build Your Career at <span style={{ fontFamily: "Anton" }}>CAREERHUB</span>
+              Build Your Career at <span className='tracking-widest' style={{ fontFamily: "Anton" }}>CAREERHUB</span>
             </span>
           </h1>
           <p className="text-gray-300 sm:mt-4 text-xs sm:text-xl">

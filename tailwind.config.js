@@ -9,4 +9,5 @@ module.exports = {
     },
   },
   plugins: [require('tw-animate-css')],
+  safeList: ['bg-opacity-50',],
 };
