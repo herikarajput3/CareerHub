@@ -1,5 +1,4 @@
 import './App.css'
-import { Button } from './components/ui/button'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import LandingPage from './pages/LandingPage'
 import OnBoarding from './pages/OnBoarding'
@@ -10,26 +9,70 @@ import PostJob from './pages/PostJob'
 import SavedJob from './pages/SavedJob'
 import MyJob from './pages/MyJob'
 import { ThemeProvider } from './components/ThemeProvider'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
 
   return (
     <>
-      <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <Router>
           <Routes>
-            <Route element={<AppLayout />} >
-              <Route path='/' element={<LandingPage />} />
-              <Route path='/onboarding' element={<OnBoarding />} />
-              <Route path='/jobs' element={<JobListing />} />
-              <Route path='/job/:id' element={<JobPage />} />
-              <Route path='/post-job' element={<PostJob />} />
-              <Route path='/saved-jobs' element={<SavedJob />} />
-              <Route path='/my-jobs' element={<MyJob />} />
+            <Route element={<AppLayout />}>
+              <Route path="/" element={<LandingPage />} />
+              <Route
+                path="/onboarding"
+                element={
+                  <ProtectedRoute>
+                    <OnBoarding />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/jobs"
+                element={
+                  <ProtectedRoute>
+                    <JobListing />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/job/:id"
+                element={
+                  <ProtectedRoute>
+                    <JobPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/post-job"
+                element={
+                  <ProtectedRoute>
+                    <PostJob />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/saved-jobs"
+                element={
+                  <ProtectedRoute>
+                    <SavedJob />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-jobs"
+                element={
+                  <ProtectedRoute>
+                    <MyJob />
+                  </ProtectedRoute>
+                }
+              />
             </Route>
           </Routes>
         </Router>
       </ThemeProvider>
+
     </>
   )
 }
