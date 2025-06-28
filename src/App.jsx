@@ -24,7 +24,7 @@ function App() {
               <Route path='/jobs' element={<JobListing />} />
               <Route path='/job/:id' element={<JobPage />} />
               <Route path='/post-job' element={<PostJob />} />
-              <Route path='/saved-job' element={<SavedJob />} />
+              <Route path='/saved-jobs' element={<SavedJob />} />
               <Route path='/my-jobs' element={<MyJob />} />
             </Route>
           </Routes>

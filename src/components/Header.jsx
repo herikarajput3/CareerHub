@@ -1,22 +1,29 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Button } from './ui/button'
 import {
   SignedIn,
   SignedOut,
   UserButton,
   SignIn,
-  useUser,
-  SignInButton,
 } from "@clerk/clerk-react";
-import { PenBox } from 'lucide-react';
+import { BriefcaseBusiness, HeartIcon, PenBox } from 'lucide-react';
 
 const Header = () => {
   const [showSignIn, setShowSignIn] = useState(false);
 
+  const [search, setSearch] = useSearchParams();
+
+  useEffect(() => {
+    if (search.get('sign-in')) {
+      setShowSignIn(true);
+    }
+  }, [search]);
+
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
       setShowSignIn(false);
+      setSearch({});
     }
   }
   return (
@@ -29,10 +36,29 @@ const Header = () => {
           </SignedOut>
           <SignedIn>
             <Link to={"/post-job"}>
-              <PenBox size={20} className='mr-2' />
-              <Button variant={"destructive"} className={"rounded-full"}>Post a Job</Button>
+              <Button variant="destructive" className="rounded-full">
+                <PenBox size={20} className="mr-2" />
+                Post a Job
+              </Button>
             </Link>
-            <UserButton />
+            <UserButton appearance={{
+              elements: {
+                avatarBox: "w-10 h-10"
+              }
+            }}>
+              <UserButton.MenuItems>
+                <UserButton.Link
+                  label="My Jobs"
+                  labelIcon={<BriefcaseBusiness size={15} />}
+                  href="/my-jobs"
+                />
+                <UserButton.Link
+                  label="Saved Jobs"
+                  labelIcon={<HeartIcon size={15} />}
+                  href="/saved-jobs"
+                />
+              </UserButton.MenuItems>
+            </UserButton>
           </SignedIn>
         </div>
       </nav>
