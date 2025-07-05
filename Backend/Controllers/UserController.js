@@ -1,3 +1,4 @@
+import { generateToken } from "../jwt";
 import UserSchema from "../Models/UserSchema";
 const bcrypt = require('bcrypt');
 
@@ -11,7 +12,7 @@ export const register = async (req, res) => {
             });
         };
 
-        const user = await UserSchema.fineOne({ email });
+        const user = await UserSchema.findOne({ email });
         if (user) {
             return res.status(400).json({
                 message: 'User already exists with this email',
@@ -21,7 +22,7 @@ export const register = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = new UserSchema({
+        const newUser = await UserSchema.create({
             fullName,
             email,
             phoneNumber,
@@ -29,10 +30,19 @@ export const register = async (req, res) => {
             role
         });
 
+        const token = generateToken({
+            id: newUser._id,
+            fullName: newUser.fullName,
+            email: newUser.email,
+            phoneNumber: newUser.phoneNumber,
+            role: newUser.role
+        })
+
         if (newUser) {
             res.status(201).json({
                 message: 'User registered successfully',
-                success: true
+                success: true,
+                token: token
             })
         } else {
             res.status(400).json({
@@ -59,7 +69,8 @@ export const login = async (req, res) => {
             });
         };
 
-        const user = await UserSchema.findOne({ email });
+        let user = await UserSchema.findOne({ email });
+
         if (!user) {
             return res.status(400).json({
                 message: 'Incorrect email or password',
@@ -67,7 +78,7 @@ export const login = async (req, res) => {
             });
         };
 
-        const isPasswordMatch = await bcrypt.compare(password, user.password);
+        const isPasswordMatch = await bcrypt.compareSync(password, user.password);
         if (!isPasswordMatch) {
             return res.status(400).json({
                 message: 'Incorrect email or password',
@@ -83,12 +94,39 @@ export const login = async (req, res) => {
             });
         };
 
-        // const token = {}
-
-        res.status(200).json({
-            message: 'User logged in successfully',
-            success: true
+        const token = generateToken({
+            id: user._id,
+            fullName: user.fullName,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            role: user.role
         })
+
+        // res.status(200).json({
+        //     message: 'User logged in successfully',
+        //     success: true,
+        //     token: token
+        // })
+
+        user = {
+            id: user._id,
+            fullName: user.fullName,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            role: user.role,
+            profile: user.profile
+        }
+
+        return res.status(200).cookie('token', token, {
+            maxAge: 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            sameSite: 'strict',
+        }).json({
+            message: `Welcome Back, ${user.fullName}`,
+            success: true,
+            token: token
+        });
+
     } catch (error) {
         console.error(error, "error");
         res.status(500).json({
