@@ -135,3 +135,72 @@ export const login = async (req, res) => {
         })
     }
 }
+
+export const logOut = async (req, res) => {
+    try {
+        return res.status(200).clearCookie('token').json({
+            message: 'User logged out successfully',
+            success: true
+        })
+    } catch (error) {
+        console.error(error, "error");
+        res.status(500).json({
+            message: 'Internal server error',
+            success: false
+        })
+    }
+}
+
+export const updateProfile = async (req, res) => {
+    try {
+        const { fullName, email, phoneNumber, bio, skills } = req.body;
+        const file = req.file;
+
+        if (!fullName && !email && !phoneNumber && !bio && !skills) {
+            return res.status(400).json({
+                message: 'Something is missing',
+                success: false
+            });
+        };
+
+        const skillArray = skills.split(',');
+
+        const userId = req.id; //middleware authentication
+
+        const user = await UserSchema.findById(userId);
+        if (!user) {
+            return res.status(400).json({
+                message: 'User not found',
+                success: false
+            });
+        };
+        // Update user profile
+        user.fullName = fullName;
+        user.email = email;
+        user.phoneNumber = phoneNumber;
+        user.profile.bio = bio;
+        user.profile.skills = skillArray;
+        // Resume will be updated later
+        await user.save();
+
+        user = {
+            _id: user._id,
+            fullName: user.fullName,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            role: user.role,
+            profile: user.profile
+        }
+        return res.status(200).json({
+            message: 'Profile updated successfully',
+            success: true,
+            user
+        });
+    } catch (error) {
+        console.error(error, "error");
+        res.status(500).json({
+            message: 'Internal server error',
+            success: false
+        })
+    }
+}

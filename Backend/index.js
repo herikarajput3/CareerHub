@@ -13,7 +13,7 @@ const router = require('./Router/route');
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser());
-app.use('/', router);
+app.use('/api/v1/user', router);
 
 const corsOptions = {
     origin: 'http://localhost:5173',
