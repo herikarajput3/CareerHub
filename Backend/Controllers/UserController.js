@@ -156,7 +156,7 @@ exports.updateProfile = async (req, res) => {
         const { fullName, email, phoneNumber, bio, skills } = req.body;
         const file = req.file;
 
-        if (!fullName && !email && !phoneNumber && !bio && !skills) {
+        if (!fullName || !email || !phoneNumber || !bio || !skills) {
             return res.status(400).json({
                 message: 'Something is missing',
                 success: false
@@ -167,7 +167,6 @@ exports.updateProfile = async (req, res) => {
 
         // const userId = req.id; //middleware authentication
 
-        // const { userId } = req.params;
         const userId = req.params.id;
 
         const updateUser = await UserSchema.findByIdAndUpdate(

@@ -7,7 +7,8 @@ const commonSchema = {
 const companySchema = new Schema({
     name: {
         ...commonSchema,
-        required: true
+        required: true,
+        unique: true
     },
     description: {
         ...commonSchema
