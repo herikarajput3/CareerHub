@@ -19,6 +19,9 @@ const jobSchema = new Schema({
         type: Number,
         required: true
     },
+    experience: {
+        ...commonSchema
+    },
     location: {
         ...commonSchema
     },
