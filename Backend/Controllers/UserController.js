@@ -1,8 +1,8 @@
-import { generateToken } from "../jwt";
-import UserSchema from "../Models/UserSchema";
+const UserSchema = require('../Models/UserSchema');
+const { generateToken, verifyToken } = require('../Middleware/jwt');
 const bcrypt = require('bcrypt');
 
-export const register = async (req, res) => {
+exports.register = async (req, res) => {
     try {
         const { fullName, email, phoneNumber, password, role } = req.body;
         if (!fullName || !email || !phoneNumber || !password || !role) {
@@ -59,7 +59,7 @@ export const register = async (req, res) => {
     }
 }
 
-export const login = async (req, res) => {
+exports.login = async (req, res) => {
     try {
         const { email, password, role } = req.body;
         if (!email || !password || !role) {
@@ -136,7 +136,7 @@ export const login = async (req, res) => {
     }
 }
 
-export const logOut = async (req, res) => {
+exports.logOut = async (req, res) => {
     try {
         return res.status(200).clearCookie('token').json({
             message: 'User logged out successfully',
@@ -151,7 +151,7 @@ export const logOut = async (req, res) => {
     }
 }
 
-export const updateProfile = async (req, res) => {
+exports.updateProfile = async (req, res) => {
     try {
         const { fullName, email, phoneNumber, bio, skills } = req.body;
         const file = req.file;
@@ -163,38 +163,46 @@ export const updateProfile = async (req, res) => {
             });
         };
 
-        const skillArray = skills.split(',');
+        const skillArray = skills ? skills.split(',') : [];
 
-        const userId = req.id; //middleware authentication
+        // const userId = req.id; //middleware authentication
 
-        const user = await UserSchema.findById(userId);
-        if (!user) {
+        // const { userId } = req.params;
+        const userId = req.params.id;
+
+        const updateUser = await UserSchema.findByIdAndUpdate(
+            userId,
+            {
+                fullName,
+                email,
+                phoneNumber,
+                'profile.bio': bio,
+                'profile.skills': skillArray
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        )
+
+        if (!updateUser) {
             return res.status(400).json({
                 message: 'User not found',
                 success: false
             });
-        };
-        // Update user profile
-        user.fullName = fullName;
-        user.email = email;
-        user.phoneNumber = phoneNumber;
-        user.profile.bio = bio;
-        user.profile.skills = skillArray;
-        // Resume will be updated later
-        await user.save();
-
-        user = {
-            _id: user._id,
-            fullName: user.fullName,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            role: user.role,
-            profile: user.profile
         }
+
         return res.status(200).json({
             message: 'Profile updated successfully',
             success: true,
-            user
+            user: {
+                _id: updateUser._id,
+                fullName: updateUser.fullName,
+                email: updateUser.email,
+                phoneNumber: updateUser.phoneNumber,
+                role: updateUser.role,
+                profile: updateUser.profile
+            }
         });
     } catch (error) {
         console.error(error, "error");

@@ -1,12 +1,12 @@
 const express = require('express');
 const { register, login, updateProfile } = require('../Controllers/UserController');
-const { jwtAuthMiddleware } = require('../jwt');
+const { jwtAuthMiddleware } = require('../Middleware/jwt');
 
 const router = express.Router();
 require('../db');
 
 router.post('/register', register);
-router.post('/login',jwtAuthMiddleware, login);
-router.put('/profile/update', updateProfile)
+router.post('/login', login);
+router.put('/profile/update/:id', jwtAuthMiddleware, updateProfile)
 
 module.exports = router;

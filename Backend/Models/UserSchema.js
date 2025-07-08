@@ -22,7 +22,7 @@ const userSchema = new Schema({
     },
     role: {
         ...commonSchema,
-        enum: ['candidate', 'recruiter'],
+        enum: ['Candidate', 'Recruiter'],
     },
     profile: {
         bio: { type: String },
