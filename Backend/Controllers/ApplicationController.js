@@ -1,6 +1,7 @@
 const ApplicationSchema = require("../Models/ApplicationSchema");
 const JobSchema = require("../Models/JobSchema");
 
+
 exports.applyJob = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -35,6 +36,8 @@ exports.applyJob = async (req, res) => {
 
         // Create application
         const application = await ApplicationSchema.create({ applicant: userId, job: jobId });
+
+        // Add the application ID to the job's applications array
 
         JobSchema.applications.push(application._id);
 
