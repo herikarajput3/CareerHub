@@ -11,7 +11,7 @@ const userSchema = new Schema({
     },
     email: {
         ...commonSchema,
-        unique: true
+        // unique: true
     },
     phoneNumber: {
         type: Number,
@@ -22,7 +22,7 @@ const userSchema = new Schema({
     },
     role: {
         ...commonSchema,
-        enum: ['Candidate', 'Recruiter'],
+        enum: ['candidate', 'recruiter'],
     },
     profile: {
         bio: { type: String },

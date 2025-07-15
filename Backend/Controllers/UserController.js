@@ -12,13 +12,13 @@ exports.register = async (req, res) => {
             });
         };
 
-        const user = await UserSchema.findOne({ email });
-        if (user) {
-            return res.status(400).json({
-                message: 'User already exists with this email',
-                success: false
-            });
-        };
+        // const user = await UserSchema.findOne({ email });
+        // if (user) {
+        //     return res.status(400).json({
+        //         message: 'User already exists with this email',
+        //         success: false
+        //     });
+        // };
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
