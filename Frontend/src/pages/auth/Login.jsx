@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../../redux/authSlice";
 
 // 🛡️ Validation Schema (email & password only)
 const loginSchema = z.object({
@@ -27,9 +29,11 @@ const Login = () => {
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const onSubmit = async (data) => {
     try {
+      dispatch(setLoading(true));
       const res = await axios.post("http://localhost:5000/api/login", data, {
         headers: {
           "Content-Type": "application/json",
