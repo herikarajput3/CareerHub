@@ -6,7 +6,7 @@ commonSchema = {
 }
 
 const userSchema = new Schema({
-    fullName: {
+    fullname: {
         ...commonSchema
     },
     email: {

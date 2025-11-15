@@ -4,8 +4,8 @@ const bcrypt = require('bcrypt');
 
 exports.register = async (req, res) => {
     try {
-        const { fullName, email, phoneNumber, password, role } = req.body;
-        if (!fullName || !email || !phoneNumber || !password || !role) {
+        const { fullname, email, phoneNumber, password, role } = req.body;
+        if (!fullname || !email || !phoneNumber || !password || !role) {
             return res.status(400).json({
                 message: 'All fields are required',
                 success: false
@@ -23,7 +23,7 @@ exports.register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = await UserSchema.create({
-            fullName,
+            fullname,
             email,
             phoneNumber,
             password: hashedPassword,
@@ -32,7 +32,7 @@ exports.register = async (req, res) => {
 
         const token = generateToken({
             id: newUser._id,
-            fullName: newUser.fullName,
+            fullname: newUser.fullname,
             email: newUser.email,
             phoneNumber: newUser.phoneNumber,
             role: newUser.role
@@ -96,7 +96,7 @@ exports.login = async (req, res) => {
 
         const token = generateToken({
             id: user._id,
-            fullName: user.fullName,
+            fullname: user.fullname,
             email: user.email,
             phoneNumber: user.phoneNumber,
             role: user.role
@@ -110,7 +110,7 @@ exports.login = async (req, res) => {
 
         user = {
             id: user._id,
-            fullName: user.fullName,
+            fullname: user.fullname,
             email: user.email,
             phoneNumber: user.phoneNumber,
             role: user.role,
@@ -122,7 +122,7 @@ exports.login = async (req, res) => {
             httpOnly: true,
             sameSite: 'strict',
         }).json({
-            message: `Welcome Back, ${user.fullName}`,
+            message: `Welcome Back, ${user.fullname}`,
             success: true,
             token: token
         });
@@ -153,10 +153,10 @@ exports.logOut = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
     try {
-        const { fullName, email, phoneNumber, bio, skills } = req.body;
+        const { fullname, email, phoneNumber, bio, skills } = req.body;
         const file = req.file;
 
-        if (!fullName || !email || !phoneNumber || !bio || !skills) {
+        if (!fullname || !email || !phoneNumber || !bio || !skills) {
             return res.status(400).json({
                 message: 'Something is missing',
                 success: false
@@ -172,7 +172,7 @@ exports.updateProfile = async (req, res) => {
         const updateUser = await UserSchema.findByIdAndUpdate(
             userId,
             {
-                fullName,
+                fullname,
                 email,
                 phoneNumber,
                 'profile.bio': bio,
@@ -196,7 +196,7 @@ exports.updateProfile = async (req, res) => {
             success: true,
             user: {
                 _id: updateUser._id,
-                fullName: updateUser.fullName,
+                fullname: updateUser.fullname,
                 email: updateUser.email,
                 phoneNumber: updateUser.phoneNumber,
                 role: updateUser.role,

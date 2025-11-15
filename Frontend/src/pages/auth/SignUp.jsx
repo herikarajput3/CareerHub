@@ -1,155 +1,128 @@
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { toast } from "sonner";
-
-const formSchema = z.object({
-  fullName: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Enter a valid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
-  role: z.enum(["candidate", "recruiter"], { message: "Select a role" }),
-  // profile: z.any(),
-});
+import { Label } from '../../components/ui/label'
+import { Input } from '../../components/ui/input'
+import { RadioGroup, RadioGroupItem } from '../../components/ui/radio-group'
+import { Button } from '../../components/ui/button'
+import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { API_END_POINT } from '../../utils/constant'
+import { toast } from 'sonner'
+import axios from 'axios'
 
 const SignUp = () => {
-  const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({
-    resolver: zodResolver(formSchema),
+  const [input, setInput] = useState({
+    fullname: '',
+    email: '',
+    phoneNumber: '',
+    password: '',
+    role: '',
+    file: ''
   });
+  const navigate = useNavigate();
 
-  // const onSubmit = async (data) => {
-  //   const formData = new FormData();
-  //   formData.append("fullName", data.fullName);
-  //   formData.append("email", data.email);
-  //   formData.append("password", data.password);
-  //   formData.append("phoneNumber", data.phoneNumber);
-  //   formData.append("role", data.role);
-  //   // if(data.profile){
-  //   //   formData.append("profile", data.file[0]);
-  //   // }
+  // below functions are for getting input value
+  const changeEventHandler = (e) => {
+    // console.log("Change event handlerE",e);
+    // in this event whatever we enter into input field will be stored in input variable
+    setInput({ ...input, [e.target.name]: e.target.value });
+    // here name means input field name for eg: e.target.name = "fullname" and value means input field value for eg: e.target.value = "Herika Rajput"
+  }
 
-  //   try {
-  //     const res = await axios.post("http://localhost:5000/api/register", formData, {
-  //       headers: {
-  //         "Content-Type": "multipart/form-data",
+  const changeFileHandler = (e) => {
+    setInput({ ...input, file: e.target.files?.[0] });
+  }
 
-  //       },
-  //       withCredentials: true
-  //     });
-  //     console.log("response", res.data);
-  //     reset();
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-
-  // };
-
-  const onSubmit = async (data) => {
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    // in this function whatever the data is written in input field will be stored in input variable so we can easily get data from input
+    // console.log("submitHandler", input);
+    const formData = new FormData();
+    formData.append('fullname', input.fullname);
+    formData.append('email', input.email);
+    formData.append('phoneNumber', input.phoneNumber);
+    formData.append('password', input.password);
+    formData.append('role', input.role);
+    if (input.file) {
+      formData.append('file', input.file);
+    }
     try {
-      const res = await axios.post("http://localhost:5000/api/register", data, {
-        headers: {
-          "Content-Type": "application/json",
+      const res = await axios.post(`${API_END_POINT}/register`, formData, {
+        headers:
+        {
+          'Content-Type': 'multipart/form-data'
         },
         withCredentials: true,
       });
-      // console.log("response", res);
       if (res.data.success) {
-        navigate("/login");
+        navigate('/login');
         toast.success(res.data.message);
       }
-      reset();
     } catch (error) {
-      console.error("Error:", error);
-      toast.error(error.res.data.message);
+      console.error("Error while registering user:", error);
+      toast.error(error.response.data.message);
     }
-  };
+
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-8 space-y-6">
-        <h2 className="text-2xl font-bold text-center text-gray-800">Create an Account</h2>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name</Label>
-            <Input id="fullName" {...register("fullName")} placeholder="Herika Rajput" />
-            {errors.fullName && <p className="text-sm text-red-500">{errors.fullName.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" {...register("email")} placeholder="you@example.com" />
-            {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" {...register("password")} placeholder="••••••••" />
-            {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="phoneNumber">Phone Number</Label>
-            <Input id="phoneNumber" type="tel" {...register("phoneNumber")} placeholder="+91-9876543210" />
-            {errors.phoneNumber && <p className="text-sm text-red-500">{errors.phoneNumber.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <Label>Role</Label>
-            <div className="flex flex-col gap-2 mt-1">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  value="candidate"
-                  {...register("role")}
-                  className="accent-[#F83002]"
-                />
-                <span>Candidate</span>
-              </label>
-
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  value="recruiter"
-                  {...register("role")}
-                  className="accent-[#F83002]"
-                />
-                <span>Recruiter</span>
-              </label>
+    <div className='flex items-center justify-center max-w-7xl mx-auto'>
+      <form onSubmit={submitHandler} className='w-1/2 border border-gray-200 rounded-md p-4 my-10'>
+        <h1 className='font-bold text-xl mb-5'>SignUp</h1>
+        <div className='my-2'>
+          <Label className='mb-2'>Full Name</Label>
+          <Input type="text" value={input.fullname} name='fullname' onChange={changeEventHandler} placeholder='Herika Rajput' />
+        </div>
+        <div className='my-2'>
+          <Label className='mb-2'>Email</Label>
+          <Input type="email" value={input.email} name='email' onChange={changeEventHandler} placeholder='herikarajput@gmail.com' />
+        </div>
+        <div className='my-2'>
+          <Label className='mb-2'>Phone Number</Label>
+          <Input type="number" value={input.phoneNumber} name='phoneNumber' onChange={changeEventHandler} placeholder='123456789' />
+        </div>
+        <div className='my-2'>
+          <Label className='mb-2'>Password</Label>
+          <Input type="password" value={input.password} name='password' onChange={changeEventHandler} placeholder='********' />
+        </div>
+        <div className='flex items-center justify-between'>
+          <RadioGroup className="flex items-center gap-4 my-3">
+            <div className='flex items-center space-x-2'>
+              <Input
+                type="radio"
+                name="role"
+                value="candidate"
+                checked={input.role === 'candidate'}
+                onChange={changeEventHandler}
+                id="candidate"
+                className={"cursor-pointer"} />
+              <Label htmlFor="candidate">Candidate</Label>
             </div>
-            {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
-          </div>
+            <div className='flex items-center space-x-2'>
+              <Input
+                type="radio"
+                name="role"
+                value="recruiter"
+                checked={input.role === 'recruiter'}
+                onChange={changeEventHandler}
+                id="recruiter"
+                className={"cursor-pointer"} />
+              <Label htmlFor="recruiter">Recruiter</Label>
+            </div>
+          </RadioGroup>
 
-          {/* <div className="space-y-2">
-            <Label htmlFor="profile">Profile</Label>
-            <Input accept="image/*" id="profile" type="file" {...register("profile")} />
-          </div> */}
-
-          <Button type="submit" className="w-full bg-[#F83002] hover:bg-[#d62600] text-white font-medium">
-            Sign Up
-          </Button>
-        </form>
-
-        <p className="text-sm text-center text-gray-600">
-          Already have an account?{" "}
-          <Link to="/login" className="text-[#F83002] hover:underline">
-            Log In
-          </Link>
-        </p>
-      </div>
+        </div>
+        <div className='flex items-center gap-2'>
+          <Label>Profile</Label>
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={changeFileHandler}
+            className={"cursor-pointer"} />
+        </div>
+        <Button type="submit" className={"w-full my-4"}>SignUp</Button>
+        <span className='text-sm'>Already have an account? <Link to="/login" className='text-blue-600'>Login</Link></span>
+      </form>
     </div>
-  );
-};
+  )
+}
 
-export default SignUp;
+export default SignUp

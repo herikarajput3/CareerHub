@@ -1,117 +1,94 @@
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { toast } from "sonner";
-import { useDispatch } from "react-redux";
-import { setLoading } from "../../redux/authSlice";
+import { Label } from '../../components/ui/label'
+import { Input } from '../../components/ui/input'
+import { RadioGroup, RadioGroupItem } from '../../components/ui/radio-group'
+import { Button } from '../../components/ui/button'
+import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import axios from 'axios'
 
-// 🛡️ Validation Schema (email & password only)
-const loginSchema = z.object({
-  email: z.string().email("Enter a valid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  role: z.enum(["candidate", "recruiter"], { message: "Select a role" }),
-
-});
 
 const Login = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset
-  } = useForm({
-    resolver: zodResolver(loginSchema),
+  const [input, setInput] = useState({
+    email: '',
+    password: '',
+    role: '',
   });
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const changeEventHandler = (e) => {
+    // in this event whatever we enter into input field will be stored in input variable
+    setInput({ ...input, [e.target.name]: e.target.value });
+    // here name means input field name for eg: e.target.name = "fullname" and value means input field value for eg: e.target.value = "Herika Rajput"
+  }
 
-  const onSubmit = async (data) => {
+  const submitHandler = async (e) => {
+    e.preventDefault();
     try {
-      dispatch(setLoading(true));
-      const res = await axios.post("http://localhost:5000/api/login", data, {
-        headers: {
-          "Content-Type": "application/json",
+      const res = await axios.post(`${API_END_POINT}/login`, input, {
+        headers:
+        {
+          'Content-Type': 'application/json'
         },
         withCredentials: true,
       });
-      console.log("response", res.data);
       if (res.data.success) {
-        navigate("/signup");
+        navigate('/');
         toast.success(res.data.message);
       }
-      reset();
     } catch (error) {
-      console.error("Error:", error);
-      toast.error(error.res.data.message);
+      console.error("Error while registering user:", error);
+      toast.error(error.response.data.message);
+
     }
-  };
+
+  }
 
   return (
-    <>
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-8 space-y-6">
-          <h2 className="text-2xl font-bold text-center text-gray-800">Log In</h2>
+    <div className='flex items-center justify-center max-w-7xl mx-auto'>
+      <form onSubmit={submitHandler} className='w-1/2 border border-gray-200 rounded-md p-4 my-10'>
+        <h1 className='font-bold text-xl mb-5'>Login</h1>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" {...register("email")} placeholder="you@example.com" />
-              {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" {...register("password")} placeholder="••••••••" />
-              {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <Label>Role</Label>
-              <div className="flex flex-col gap-2 mt-1">
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    value="candidate"
-                    {...register("role")}
-                    className="accent-[#F83002]"
-                  />
-                  <span>Candidate</span>
-                </label>
-
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    value="recruiter"
-                    {...register("role")}
-                    className="accent-[#F83002]"
-                  />
-                  <span>Recruiter</span>
-                </label>
-              </div>
-              {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
-            </div>
-
-            <Button type="submit" className="mt-2 w-full bg-[#F83002] hover:bg-[#d62600] text-white font-medium">
-              Log In
-            </Button>
-          </form>
-
-          <p className="text-sm text-center text-gray-600">
-            Don’t have an account?{" "}
-            <Link to="/signup" className="text-[#F83002] hover:underline">
-              Sign Up
-            </Link>
-          </p>
+        <div className='my-2'>
+          <Label className='mb-2'>Email</Label>
+          <Input type="email" name='email' value={input.email} onChange={changeEventHandler} placeholder='herikarajput@gmail.com' />
         </div>
-      </div>
-    </>
-  );
-};
 
-export default Login;
+        <div className='my-2'>
+          <Label className='mb-2'>Password</Label>
+          <Input type="password" name='password' value={input.password} onChange={changeEventHandler} placeholder='********' />
+        </div>
+
+        <div className='flex items-center justify-between'>
+          <RadioGroup className="flex items-center gap-4 my-5">
+            <div className='flex items-center space-x-2'>
+              <Input
+                type="radio"
+                name="role"
+                value="candidate"
+                checked={input.role === "candidate"}
+                onChange={changeEventHandler}
+                id="candidate"
+                className={"cursor-pointer"} />
+              <Label htmlFor="candidate">Candidate</Label>
+            </div>
+            <div className='flex items-center space-x-2'>
+              <Input
+                type="radio"
+                name="role"
+                value="recruiter"
+                checked={input.role === "recruiter"}
+                onChange={changeEventHandler}
+                id="recruiter"
+                className={"cursor-pointer"} />
+              <Label htmlFor="recruiter">Recruiter</Label>
+            </div>
+          </RadioGroup>
+
+        </div>
+        <Button type="submit" className={"w-full my-4"}>Login</Button>
+        <span className='text-sm'>Already have an account? <Link to="/login" className='text-blue-600'>Login</Link></span>
+      </form>
+    </div>
+  )
+}
+
+export default Login
