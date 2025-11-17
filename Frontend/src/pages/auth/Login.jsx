@@ -7,6 +7,9 @@ import { useState } from 'react'
 import { API_END_POINT } from '../../utils/constant'
 import { toast } from 'sonner'
 import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
+import { Loader2 } from 'lucide-react'
+import { setLoading } from '../../redux/authSlice'
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -14,7 +17,9 @@ const Login = () => {
     password: '',
     role: '',
   });
+  const { loading } = useSelector(store => store.auth);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const changeEventHandler = (e) => {
     // in this event whatever we enter into input field will be stored in input variable
@@ -25,6 +30,7 @@ const Login = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
+      dispatch(setLoading(true));
       const res = await axios.post(`${API_END_POINT}/login`, input, {
         headers:
         {
@@ -40,6 +46,8 @@ const Login = () => {
       console.error("Error while registering user:", error);
       toast.error(error.response.data.message);
 
+    } finally {
+      dispatch(setLoading(false));
     }
 
   }
@@ -86,9 +94,15 @@ const Login = () => {
           </RadioGroup>
 
         </div>
-        <Button type="submit" className={"w-full my-4"}>Login</Button>
+        {
+          loading ?
+            <Button className={"w-full my-4"} disabled><Loader2 className='mr-2 h-4 w-4 animate-spin' />Please Wait</Button>
+            :
+            <Button type="submit" className={"w-full my-4"}>Login</Button>
+        }
         <span className='text-sm'>Already have an account? <Link to="/login" className='text-blue-600'>Login</Link></span>
       </form>
+
     </div>
   )
 }

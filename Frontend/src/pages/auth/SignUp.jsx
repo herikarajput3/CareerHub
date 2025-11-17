@@ -3,10 +3,13 @@ import { Input } from '../../components/ui/input'
 import { RadioGroup, RadioGroupItem } from '../../components/ui/radio-group'
 import { Button } from '../../components/ui/button'
 import { Link, useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { API_END_POINT } from '../../utils/constant'
 import { toast } from 'sonner'
 import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
+import { Loader2 } from 'lucide-react'
+import { setLoading } from '../../redux/authSlice'
 
 const SignUp = () => {
   const [input, setInput] = useState({
@@ -17,7 +20,9 @@ const SignUp = () => {
     role: '',
     file: ''
   });
+  const { loading } = useSelector(store => store.auth);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // below functions are for getting input value
   const changeEventHandler = (e) => {
@@ -45,6 +50,7 @@ const SignUp = () => {
       formData.append('file', input.file);
     }
     try {
+      dispatch(setLoading(true));
       const res = await axios.post(`${API_END_POINT}/register`, formData, {
         headers:
         {
@@ -59,6 +65,8 @@ const SignUp = () => {
     } catch (error) {
       console.error("Error while registering user:", error);
       toast.error(error.response.data.message);
+    } finally {
+      dispatch(setLoading(false));
     }
 
   }
@@ -118,7 +126,12 @@ const SignUp = () => {
             onChange={changeFileHandler}
             className={"cursor-pointer"} />
         </div>
-        <Button type="submit" className={"w-full my-4"}>SignUp</Button>
+        {
+          loading ?
+            <Button className={"w-full my-4"} disabled><Loader2 className='mr-2 h-4 w-4 animate-spin' />Please Wait</Button>
+            :
+            <Button type="submit" className={"w-full my-4"}>SignUp</Button>
+        }
         <span className='text-sm'>Already have an account? <Link to="/login" className='text-blue-600'>Login</Link></span>
       </form>
     </div>
