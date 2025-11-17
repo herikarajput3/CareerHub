@@ -1,12 +1,13 @@
 const express = require('express');
 const { jwtAuthMiddleware } = require('../Middleware/jwt');
+const { singleUpload } = require('../Middleware/Multer');
 
 const router = express.Router();
 require('../db');
 
 const { register, login, updateProfile } = require('../Controllers/UserController');
 
-router.post('/register', register);
+router.post('/register',singleUpload, register);
 router.post('/login', login);
 router.put('/profile/update/:id', jwtAuthMiddleware, updateProfile);
 

@@ -61,7 +61,7 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { email, password, role } = req.body;
+            const { email, password, role } = req.body;
         if (!email || !password || !role) {
             return res.status(400).json({
                 message: 'All fields are required',
@@ -72,7 +72,7 @@ exports.login = async (req, res) => {
         let user = await UserSchema.findOne({ email });
 
         if (!user) {
-            return res.status(400).json({
+                return res.status(400).json({
                 message: 'Incorrect email or password',
                 success: false
             });
