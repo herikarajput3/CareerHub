@@ -123,6 +123,7 @@ exports.login = async (req, res) => {
             sameSite: 'strict',
         }).json({
             message: `Welcome Back, ${user.fullname}`,
+            user,
             success: true,
             token: token
         });
