@@ -6,6 +6,7 @@ import SignUp from './pages/auth/SignUp'
 import Layout from './layout/Layout'
 import Jobs from './pages/Jobs'
 import Browse from './pages/Browse'
+import Profile from './pages/Profile'
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/browse" element={<Browse />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
           </Route>
