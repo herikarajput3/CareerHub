@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Avatar, AvatarImage } from '../components/ui/avatar'
 import { Contact, Mail, Pen } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import { Badge } from '../components/ui/badge'
 import { Label } from '../components/ui/label'
 import ApplicationTable from '../components/ApplicationTable'
+import UpdateProfileDialog from '../components/UpdateProfileDialog'
 
 const skills = ["HTML", "CSS", "JS", "React", "Node", "Express", "MongoDB"]
 const Profile = () => {
+    const [open, setOpen] = useState(false);
     const isResume = true;
     return (
         <div className='max-w-7xl mx-auto bg-white border border-gray-200 rounded-2xl my-5 p-8'>
@@ -21,7 +23,7 @@ const Profile = () => {
                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae deserunt animi esse!</p>
                     </div>
                 </div>
-                <Button className="text-right" variant={"outline"}><Pen className='h-5 w-5' /></Button>
+                <Button onClick={() => setOpen(true)} className="text-right" variant={"outline"}><Pen className='h-5 w-5' /></Button>
             </div>
             <div className='my-5'>
                 <div className='flex items-center gap-3 my-2'>
@@ -51,7 +53,7 @@ const Profile = () => {
                 <h1 className='text-lg font-bold my-5'>Applied Jobs</h1>
                 <ApplicationTable />
             </div>
-
+            <UpdateProfileDialog open={open} setOpen={setOpen} />
         </div>
     )
 }
