@@ -7,10 +7,10 @@ import { Loader2 } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { API_END_POINT } from '../utils/constant'
 import { toast } from 'sonner'
-import { setUser } from '../redux/authSlice'
+import { setUser, setLoading } from '../redux/authSlice'
 import axios from 'axios'
 const UpdateProfileDialog = ({ open, setOpen }) => {
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false);
     const { user } = useSelector(store => store.auth);
     const [input, setInput] = useState({
         fullname: user?.fullname,
@@ -21,6 +21,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         skills: (user?.profile?.skills || []).join(','),
         file: user?.profile?.resume
     });
+    const { loading } = useSelector(store => store.auth);
     const dispatch = useDispatch();
     const userId = "hodh";
 
@@ -45,7 +46,8 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
             formData.append('file', input.file);
         }
         try {
-            const res = await axios.put(`${API_END_POINT}/profile/update/${userId}`, formData, {
+            dispatch(setLoading(true));
+            const res = await axios.post(`${API_END_POINT}/profile/update`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${user?.token}`
@@ -55,15 +57,15 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
             if (res.data.success) {
                 dispatch(setUser(res.data.user));
                 toast.success(res.data.message);
-                setOpen(false);
+                // setOpen(false);
             }
         } catch (error) {
             console.log(error);
             toast.error(error.response.data.message);
         } finally {
-            setLoading(false);
+            dispatch(setLoading(false));
         }
-        // setOpen(false);
+        setOpen(false);
         console.log(input, "input");
 
     }
@@ -99,10 +101,10 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                                 />
                             </div>
                             <div className='grid grid-cols-4 items-center gap-4'>
-                                <Label htmlFor='number' className='text-right'>Number</Label>
+                                <Label htmlFor='phoneNumber' className='text-right'>Number</Label>
                                 <Input
-                                    id="number"
-                                    name="number"
+                                    id="phoneNumber"
+                                    name="phoneNumber"
                                     value={input.phoneNumber}
                                     onChange={changeEventHandler}
                                     type='number'
