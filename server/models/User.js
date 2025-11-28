@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const bcrypt = require('bcrypt');
 
 const commonSchema = {
     type: String,
@@ -18,10 +19,21 @@ const userSchema = Schema({
         minlength: 6
     },
     role: {
-        ...commonSchema,
+        type: String,
         enum: ["candidate", "recruiter"],
+        required: true
     }
+
 }, { timestamps: true })
+
+userSchema.index({ email: 1 }, { unique: true })
+
+userSchema.pre("save", async function (next) {
+    if (this.isModified("password")) {
+        this.password = await bcrypt.hash(this.password, 10)
+    }
+    next();
+});
 
 module.exports = model("User", userSchema)
 
