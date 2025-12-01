@@ -4,11 +4,14 @@ const app = express()
 require('dotenv').config()
 const port = process.env.PORT || 3000
 require('./config/db')
-const router = require('./routes/routes')
+const authRoutes = require('./routes/auth.routes');
+const jobsRoutes = require('./routes/jobs.routes');
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use('/api', router)
+app.use('/api/auth', authRoutes);
+app.use('/api/jobs', jobsRoutes);
+
 
 app.get('/', (req, res) => res.send('Hello Herika!'))
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

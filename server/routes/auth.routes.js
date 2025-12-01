@@ -1,4 +1,4 @@
-const { userRegister, userLogin } = require('../controllers/userController');
+const { userRegister, userLogin } = require('../controllers/user.controller');
 const { jwtAuthMiddleware } = require('../middleware/jwt');
 
 const router = require('express').Router()

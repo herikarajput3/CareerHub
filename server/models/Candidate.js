@@ -6,6 +6,10 @@ const candidateSchema = new Schema({
         type: String,
         trim: true
     },
+    phone: {
+        type: String,
+        trim: true
+    },
     skills: [
         {
             type: String,
