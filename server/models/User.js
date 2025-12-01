@@ -8,30 +8,31 @@ const commonSchema = {
 
 const userSchema = Schema({
     name: {
-        ...commonSchema
+        ...commonSchema,
+        trim: true
     },
     email: {
         ...commonSchema,
-        unique: true
+        unique: true,
+        trim: true
     },
     password: {
         ...commonSchema,
         minlength: 6
-    },
-    role: {
-        type: String,
-        enum: ["candidate", "recruiter"],
-        required: true
     }
-
-}, { timestamps: true })
-
-userSchema.index({ username: 1 })
-
-userSchema.pre("save", async function () {
-    if (this.isModified("password")) {
-        this.password = await bcrypt.hash(this.password, 10)
+},
+    {
+        discriminatorKey: 'role',
+        timestamps: true
     }
+);
+
+userSchema.index({ email: 1 }, { unique: true });
+
+userSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) return next();
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
 });
 
 module.exports = model("User", userSchema)
