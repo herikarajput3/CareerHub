@@ -19,7 +19,7 @@ exports.userRegister = async (req, res) => {
                 name, email, password,
                 bio: bio || '',
                 phone,
-                skills: skills || [],
+                skills: skills ? skills.split(",") : [],
                 resumeUrl: '',
                 profilePhoto: ''
             });
