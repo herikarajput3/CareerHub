@@ -6,7 +6,7 @@ const commonSchema = {
     required: true
 }
 
-const userSchema = Schema({
+const userSchema = new Schema({
     name: {
         ...commonSchema,
         trim: true

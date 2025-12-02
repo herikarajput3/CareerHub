@@ -9,6 +9,7 @@ const jobsRoutes = require('./routes/jobs.routes');
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobsRoutes);
 
