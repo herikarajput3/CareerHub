@@ -7,7 +7,7 @@ exports.createJob = async (req, res) => {
         if (req.user.role !== 'recruiter') {
             return res.status(403).json({ message: "Only recruiters can create jobs" });
         }
-        const { title, description, location, jobType, salary, skillsRequired, jobLevel, experience, recruiter } = req.body;
+        const { title, description, location, jobType, salary, skillsRequired, jobLevel, experience } = req.body;
 
         const job = await Job.create({
             title,
@@ -85,3 +85,38 @@ exports.getJobs = async (req, res) => {
     }
 }
 
+exports.getMyJobs = async (req, res) => {
+    try {
+        if (req.user.role !== 'recruiter') {
+            return res.status(403).json({ message: "Only recruiters can view their jobs" });
+        }
+
+        const jobs = await Job.find({ recruiter: req.user.id }).sort({ createdAt: -1 });
+
+        res.status(200).json({
+            message: "Your jobs fetched successfully",
+            jobs
+        });
+
+    } catch (error) {
+        console.error("Error while getting recruiter jobs", error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.getJobById = async (req, res) => {
+    try {
+        const jobId = req.params.id;
+        const job = await Job.findById(jobId).populate({
+            path: 'recruiter',
+        });
+ 
+        res.status(200).json({
+            message: "Job fetched successfully",
+            job
+        });
+    } catch (error) {
+        console.error("Error while getting job by id", error);
+        res.status(500).json({ message: error.message });
+    }
+}
