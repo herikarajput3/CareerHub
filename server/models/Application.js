@@ -17,10 +17,6 @@ const applicationSchema = new Schema({
         default: 'pending',
         lowercase: true
     },
-    appliedDate: {
-        type: Date,
-        default: Date.now
-    },
     resumeUrl: {
         type: String,
         required: true

@@ -152,9 +152,6 @@ exports.updateApplicationStatus = async (req, res) => {
         if (application.status === "accepted") {
             application.jobId.isOpen = false;
             await application.jobId.save();
-        } else {
-            application.jobId.isOpen = true;
-            await application.jobId.save();
         }
 
         res.status(200).json({
