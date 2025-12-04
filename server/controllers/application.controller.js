@@ -101,7 +101,7 @@ exports.getApplicants = async (req, res) => {
 
         const applications = await Application.find({ jobId }).populate({
             path: 'candidateId',
-            select: 'name email phone profilePhoto resumeUrl resumeOriginalName skills bio'
+            select: 'name email phone profilePhoto resumeUrl skills bio'
         }).sort({ createdAt: -1 });
 
         res.status(200).json({
@@ -151,6 +151,9 @@ exports.updateApplicationStatus = async (req, res) => {
         // (Optional) Agar accepted hai to job close kar do
         if (application.status === "accepted") {
             application.jobId.isOpen = false;
+            await application.jobId.save();
+        } else {
+            application.jobId.isOpen = true;
             await application.jobId.save();
         }
 
