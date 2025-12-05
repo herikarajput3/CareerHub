@@ -11,7 +11,7 @@ import Layout from './Layout/Layout'
 function App() {
   return (
     <>
-      <div className="min-h-screen" data-theme="light">
+      <div className="min-h-screen">
         <Router>
           <Routes>
 
