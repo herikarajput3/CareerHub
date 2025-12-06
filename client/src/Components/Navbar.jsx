@@ -2,7 +2,41 @@ import { useEffect, useState } from "react"
 import { Link, NavLink } from "react-router-dom"
 const Navbar = () => {
     const [theme, setTheme] = useState('light');
-    // jab bhi theme change ho, <html> pe data-theme set karo
+    const userRole = "candidate";
+    const isGuest = userRole === "guest";
+
+    const primaryLinks = [
+        { to: "/", label: "Home" },
+        { to: "/jobs", label: "Jobs" },
+    ];
+
+    const secondaryLinks = [
+        { to: "/about", label: "About" },
+        { to: "/contact", label: "Contact" },
+    ];
+
+    const authLinks = {
+        guest: [],
+        candidate: [
+            { to: "/application", label: "Application" },
+        ],
+        recruiter: [
+            { to: "/postjob", label: "Post Job" },
+        ],
+    };
+
+    const navlinks = [
+        ...primaryLinks,
+        ...authLinks[userRole],
+        ...secondaryLinks
+    ];
+
+    const profileLinks = [
+        { to: "/profile", label: "Profile" },
+        ...authLinks[userRole],
+        { to: "/logout", label: "Logout" },
+    ]
+
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
     }, [theme]);
@@ -35,49 +69,21 @@ const Navbar = () => {
                         </div>
                         <ul
                             tabIndex={0}
-                            className="dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-3 shadow space-y-1">
-                            <li>
-                                <NavLink
-                                    to="/"
-                                    className={({ isActive }) =>
-                                        `block text-sm px-2 py-1 rounded-md ${isActive ? "text-orange-600 font-semibold bg-base-200" : "text-base-content hover:bg-base-200"
-                                        }`
-                                    }>Home</NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="/jobs"
-                                    className={({ isActive }) =>
-                                        `block text-sm px-2 py-1 rounded-md ${isActive ? "text-orange-600 font-semibold bg-base-200" : "text-base-content hover:bg-base-200"
-                                        }`
-                                    }>Jobs</NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="/about"
-                                    className={({ isActive }) =>
-                                        `block text-sm px-2 py-1 rounded-md ${isActive ? "text-orange-600 font-semibold bg-base-200" : "text-base-content hover:bg-base-200"
-                                        }`
-                                    }>About</NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="/contact"
-                                    className={({ isActive }) =>
-                                        `block text-sm px-2 py-1 rounded-md ${isActive ? "text-orange-600 font-semibold bg-base-200" : "text-base-content hover:bg-base-200"
-                                        }`
-                                    }>Contact</NavLink>
-                            </li>
-                            <li className="pt-2 mt-1 border-t border-base-300 flex flex-col gap-2">
-                                <Link
-                                    to="/login"
-                                    className="btn btn-ghost btn-sm w-full justify-center"
-                                >Login</Link>
-                                <Link
-                                    to="/register"
-                                    className="btn btn-neutral btn-sm text-white w-full justify-center"
-                                >Register</Link>
-                            </li>
+                            className="dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-3 shadow space-y-1" >
+
+                            {navlinks.map((link) => (
+                                <li key={link.to}>
+                                    <NavLink
+                                        to={link.to}
+                                        className={({ isActive }) =>
+                                            `block text-sm px-2 py-1 rounded-md ${isActive ? "text-orange-600 font-semibold bg-base-200" : "text-base-content hover:bg-base-200"
+                                            }`
+                                        }
+                                    >
+                                        {link.label}
+                                    </NavLink>
+                                </li>
+                            ))}
                         </ul>
                     </div>
                     {/* Logo */}
@@ -88,53 +94,29 @@ const Navbar = () => {
                     >
                         Career<span className="text-orange-600" >Hub</span>
                     </Link>
-
                 </div>
+
                 <div className="navbar-center hidden lg:flex">
                     <nav className="flex items-center gap-6 text-sm font-medium">
-                        <NavLink
-                            to="/"
-                            className={({ isActive }) =>
-                                `transition-colors ${isActive ? "text-orange-600" : "text-base-content/80"
-                                } hover:text-orange-600  hover:bg-base-100
-                                `
-                            }>Home</NavLink>
+                        {navlinks.map((link) => (
+                            <NavLink
+                                key={link.to}
+                                to={link.to}
+                                className={({ isActive }) =>
+                                    `relative pb-1 text-sm font-medium border-b-2 transition-all duration-500 ${isActive
+                                        ? "text-orange-600 border-orange-600"
+                                        : "text-base-content/80 border-transparent hover:text-orange-600 hover:border-orange-400"
+                                    } `
+                                }
+                            >
+                                {link.label}
+                            </NavLink>
 
-                        <NavLink
-                            to="/jobs"
-                            className={({ isActive }) =>
-                                `transition-colors ${isActive ? "text-orange-600" : "text-base-content/80"
-                                } hover:text-orange-600 hover:bg-base-100`
-                            }>Jobs</NavLink>
-
-                        <NavLink
-                            to="/about"
-                            className={({ isActive }) =>
-                                `transition-colors ${isActive ? "text-orange-600" : "text-base-content/80"
-                                } hover:text-orange-600  hover:bg-base-100`
-                            }>About</NavLink>
-
-                        <NavLink
-                            to="/contact"
-                            className={({ isActive }) =>
-                                `transition-colors ${isActive ? "text-orange-600" : "text-base-content/80"
-                                } hover:text-orange-600  hover:bg-base-100`
-                            }>Contact</NavLink>
+                        ))}
                     </nav>
                 </div>
-                <div className="navbar-end gap-3 ">
 
-                    {/* Sun / Moon icon button */}
-                    {/* <button
-                        onClick={handleThemeToggle}
-                        className="btn btn-ghost btn-circle btn-sm px-3"
-                        aria-label="Toggle theme"
-                        
-                    >
-                        <span className="text-lg">
-                            {theme === "dark" ? "🌞" : "🌙"}
-                        </span>
-                    </button> */}
+                <div className="navbar-end gap-3 ">
 
                     <button
                         onClick={handleThemeToggle}
@@ -146,7 +128,7 @@ const Navbar = () => {
                             <img
                                 src="https://img.icons8.com/?size=100&id=9313&format=png&color=FFFFFF"
                                 alt="Dark mode"
-                                className="w-5.5 h-5.5"
+                                className="w-5 h-5"
                             />
                         ) : (
                             // light mode ON → sun dikhayenge
@@ -158,14 +140,35 @@ const Navbar = () => {
                         )}
                     </button>
 
-
-                    <div className="hidden sm:flex gap-2">
-                        <Link to="/login" className="btn btn-ghost btn-sm">Login</Link>
-                        <Link to="/register" className="btn btn-neutral btn-sm text-white">Register</Link>
-                    </div>
+                    {isGuest ? (
+                        <div className="hidden sm:flex gap-2">
+                            <Link to="/login" className="btn btn-ghost btn-sm">Login</Link>
+                            <Link to="/register" className="btn btn-neutral btn-sm text-white">Register</Link>
+                        </div>
+                    ) : (
+                        <div className="dropdown dropdown-end">
+                            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+                                <div className="w-7 sm:w-9 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                                    <img src="https://img.daisyui.com/images/profile/demo/spiderperson@192.webp" />
+                                </div>
+                            </div>
+                            <ul
+                                tabIndex={-1}
+                                className="mt-2 dropdown-content menu bg-base-100 rounded-box z-10 w-40 p-2 shadow-sm">
+                                {profileLinks.map((link) => (
+                                    <li key={link.to}>
+                                        <NavLink
+                                            to={link.to}
+                                            className={(link.label === "Logout") ? ("text-sm text-error font-medium") : ("text-sm text-base-content/80 font-medium")}
+                                        >
+                                            {link.label}</NavLink></li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                 </div>
-            </div >
-        </header>
+            </div>
+        </header >
     )
 }
 
