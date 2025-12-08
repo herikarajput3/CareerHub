@@ -33,7 +33,6 @@ const Navbar = () => {
 
     const profileLinks = [
         { to: "/profile", label: "Profile" },
-        ...authLinks[userRole],
         { to: "/logout", label: "Logout" },
     ]
 
