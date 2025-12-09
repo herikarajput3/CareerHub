@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import JobCard from '../Components/JobCard';
 
 
@@ -7,6 +8,7 @@ const jobs = [
     title: "Frontend Developer",
     location: "California, USA",
     jobType: "Full-time",
+    companyName: "TechNova Labs",
     jobLevel: "Mid Level",
     salary: "20,000$",
     experience: "2 years",
@@ -18,7 +20,8 @@ const jobs = [
     title: "Backend Developer",
     location: "Remote",
     jobType: "Part-time",
-    jobLevel: "Senior",
+    companyName: "google",
+    jobLevel: "Senior level",
     salary: "30,000$",
     experience: "4 years",
     skillsRequired: ["Node.js", "MongoDB", "Express"],
@@ -29,7 +32,8 @@ const jobs = [
     title: "UI/UX Designer",
     location: "Toronto, Canada",
     jobType: "Full-time",
-    jobLevel: "Junior",
+    companyName: "Labs",
+    jobLevel: "Entry Level",
     salary: "18,000$",
     experience: "1 year",
     skillsRequired: ["Figma", "Wireframing", "Prototyping"],
@@ -38,6 +42,29 @@ const jobs = [
 ];
 
 const Job = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [locationFilter, setLocationFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [levelFilter, setLevelFilter] = useState("");
+
+  const filteredJobs = jobs.filter((job) => {
+    const term = searchTerm.toLowerCase().trim();
+    const matchesSearch = term === "" || job.title.toLowerCase().includes(term) || job.companyName.toLowerCase().includes(term);
+
+    const matchesLocation = locationFilter.trim() === "" || job.location.toLowerCase().includes(locationFilter.toLowerCase());
+
+    const matchesType = typeFilter === "" || job.jobType === typeFilter;
+
+    const matchesLevel = levelFilter === "" || job.jobLevel === levelFilter;
+
+    return (
+      matchesSearch &&
+      matchesLocation &&
+      matchesType &&
+      matchesLevel
+    );
+  });
+
   return (
     <div>
       {/* this is for candidate or without logged in users only to see listed job */}
@@ -51,18 +78,29 @@ const Job = () => {
         </div>
 
         {/* Filters bar */}
-        <div className="grid gap-3 sm:grid-cols-4 mb-8">
+        <div className="grid gap-3 sm:grid-cols-4 mb-10">
+
           <input
             type="text"
             placeholder="Search by title or company"
             className="input input-sm sm:input-md input-bordered w-full"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
+
           <input
             type="text"
             placeholder="Location"
             className="input input-sm sm:input-md input-bordered w-full"
+            value={locationFilter}
+            onChange={(e) => setLocationFilter(e.target.value)}
           />
-          <select className="select select-sm sm:select-md select-bordered w-full">
+
+          <select
+            className="select select-sm sm:select-md select-bordered w-full"
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+          >
             <option value="">All job types</option>
             <option value="full-time">Full-time</option>
             <option value="part-time">Part-time</option>
@@ -71,7 +109,12 @@ const Job = () => {
             <option value="contract">Remote</option>
             <option value="contract">Freelance</option>
           </select>
-          <select className="select select-sm sm:select-md select-bordered w-full">
+
+          <select
+            className="select select-sm sm:select-md select-bordered w-full"
+            value={levelFilter}
+            onChange={(e) => setLevelFilter(e.target.value)}
+          >
             <option value="">All job levels</option>
             <option value="entry-level">Entry level</option>
             <option value="mid-level">Mid level</option>
@@ -82,7 +125,7 @@ const Job = () => {
         {/* Yahin cards ka section aayega next step me */}
         {/* Job cards grid */}
         <div className="grid gap-4 md:grid-cols-2">
-          {jobs.map((job) => (
+          {filteredJobs.map((job) => (
             <JobCard key={job._id} job={job} />
           ))}
         </div>
