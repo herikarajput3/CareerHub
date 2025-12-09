@@ -1,33 +1,7 @@
 import JobCard from '../Components/JobCard';
 
-const jobs = [
-  {
-    id: 1,
-    title: "Frontend Developer",
-    company: "TechNova",
-    location: "Remote",
-    type: "Full-time",
-    salary: "₹6L - ₹10L",
-  },
-  {
-    id: 2,
-    title: "Backend Developer",
-    company: "CodeWorks",
-    location: "Bangalore",
-    type: "Part-time",
-    salary: "₹4L - ₹7L",
-  },
-  {
-    id: 3,
-    title: "UI/UX Designer",
-    company: "Designify",
-    location: "Delhi",
-    type: "Internship",
-    salary: "₹10k - ₹20k / month",
-  },
-];
 
-const dummyJobs = [
+const jobs = [
   {
     _id: "1",
     title: "Frontend Developer",
@@ -109,7 +83,7 @@ const Job = () => {
         {/* Job cards grid */}
         <div className="grid gap-4 md:grid-cols-2">
           {jobs.map((job) => (
-            <JobCard key={job.id} job={job} />
+            <JobCard key={job._id} job={job} />
           ))}
         </div>
 
