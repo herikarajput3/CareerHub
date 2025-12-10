@@ -75,8 +75,11 @@ exports.getJobs = async (req, res) => {
             );
         }
 
-        if(!jobs.length) {
-            return res.status(404).json({ message: "No jobs found" });
+        if (!jobs.length) {
+            return res.status(200).json({
+                message: "No jobs found",
+                jobs: []
+            });
         }
 
         res.status(200).json({
@@ -114,7 +117,7 @@ exports.getJobById = async (req, res) => {
         const job = await Job.findById(jobId).populate({
             path: 'recruiter',
         });
- 
+
         res.status(200).json({
             message: "Job fetched successfully",
             job

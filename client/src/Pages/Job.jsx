@@ -1,45 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import JobCard from '../Components/JobCard';
-
-
-const jobs = [
-  {
-    _id: "1",
-    title: "Frontend Developer",
-    location: "California, USA",
-    jobType: "Full-time",
-    companyName: "TechNova Labs",
-    jobLevel: "Mid Level",
-    salary: "20,000$",
-    experience: "2 years",
-    skillsRequired: ["React", "Tailwind", "JavaScript"],
-    postedAt: "2025-12-01",
-  },
-  {
-    _id: "2",
-    title: "Backend Developer",
-    location: "Remote",
-    jobType: "Part-time",
-    companyName: "google",
-    jobLevel: "Senior level",
-    salary: "30,000$",
-    experience: "4 years",
-    skillsRequired: ["Node.js", "MongoDB", "Express"],
-    postedAt: "2025-11-28",
-  },
-  {
-    _id: "3",
-    title: "UI/UX Designer",
-    location: "Toronto, Canada",
-    jobType: "Full-time",
-    companyName: "Labs",
-    jobLevel: "Entry Level",
-    salary: "18,000$",
-    experience: "1 year",
-    skillsRequired: ["Figma", "Wireframing", "Prototyping"],
-    postedAt: "2025-12-02",
-  },
-];
+import axios from 'axios';
 
 const Job = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,9 +8,44 @@ const Job = () => {
   const [typeFilter, setTypeFilter] = useState("");
   const [levelFilter, setLevelFilter] = useState("");
 
+  const [jobs, setJobs] = useState([]);
+  const [isloading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        setIsLoading(true);
+        setError("");
+
+        const res = await axios.get("http://localhost:5000/api/jobs");
+        setJobs(res.data.jobs);
+
+      } catch (error) {
+        console.log(error, "error");
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchJobs();
+
+  }, [])
+
+  const getCompanyName = (job) => {
+    return (
+      job.companyName ||
+      (job.recruiter && job.recruiter.companyName) ||
+      ""
+    );
+  };
+
   const filteredJobs = jobs.filter((job) => {
     const term = searchTerm.toLowerCase().trim();
-    const matchesSearch = term === "" || job.title.toLowerCase().includes(term) || job.companyName.toLowerCase().includes(term);
+    const companyName = getCompanyName(job).toLowerCase();
+
+    const matchesSearch = term === "" || job.title.toLowerCase().includes(term) || companyName.includes(term);
 
     const matchesLocation = locationFilter.trim() === "" || job.location.toLowerCase().includes(locationFilter.toLowerCase());
 
@@ -102,13 +98,14 @@ const Job = () => {
             onChange={(e) => setTypeFilter(e.target.value)}
           >
             <option value="">All job types</option>
-            <option value="full-time">Full-time</option>
-            <option value="part-time">Part-time</option>
+            <option value="full time">Full-time</option>
+            <option value="part time">Part-time</option>
             <option value="internship">Internship</option>
             <option value="contract">Contract</option>
-            <option value="contract">Remote</option>
-            <option value="contract">Freelance</option>
+            <option value="remote">Remote</option>
+            <option value="freelance">Freelance</option>
           </select>
+
 
           <select
             className="select select-sm sm:select-md select-bordered w-full"
@@ -116,16 +113,21 @@ const Job = () => {
             onChange={(e) => setLevelFilter(e.target.value)}
           >
             <option value="">All job levels</option>
-            <option value="entry-level">Entry level</option>
-            <option value="mid-level">Mid level</option>
-            <option value="senior-level">Senior level</option>
+            <option value="entry level">Entry level</option>
+            <option value="mid level">Mid level</option>
+            <option value="senior level">Senior level</option>
+
           </select>
         </div>
 
         {/* Yahin cards ka section aayega next step me */}
         {/* Job cards grid */}
         <div className="grid gap-4 md:grid-cols-2">
-          {filteredJobs.map((job) => (
+          {isloading && <p>Loading...</p>}
+          {error && <p className='text-error'>{error}</p>}
+          {!isloading && !error && filteredJobs.length === 0 && (<p>No jobs found.</p>)}
+
+          {!isloading && !error && filteredJobs.map((job) => (
             <JobCard key={job._id} job={job} />
           ))}
         </div>

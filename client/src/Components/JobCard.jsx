@@ -10,7 +10,9 @@ const JobCard = ({ job }) => {
             month: "short",
             year: "numeric",
         });
+
     }
+    const companyName = job.companyName || (job.recruiter && job.recruiter.companyName) || "";
     return (
         <article className="card rounded-xl border border-base-200 shadow-sm hover:shadow-md transition-shadow duration-200 bg-base-100">
             <div className="card-body p-4 sm:p-5">
@@ -18,8 +20,8 @@ const JobCard = ({ job }) => {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between flex-wrap gap-3">
                     <div>
                         <h2 className="card-title text-base sm:text-lg">{job.title}</h2>
-                        {job.companyName && (
-                            <p className="text-xs sm:text-sm text-base-content/60 mt-0.5">{job.companyName}</p>
+                        {companyName && (
+                            <p className="text-xs sm:text-sm text-base-content/60 mt-0.5">{companyName}</p>
                         )}
                     </div>
 
