@@ -7,6 +7,7 @@ import Contact from './Pages/Contact'
 import Login from './Pages/Auth/Login'
 import Register from './Pages/Auth/Register'
 import Layout from './Layout/Layout'
+import JobDetails from './Components/JobDetails'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route element={<Layout />}>
               <Route path="/" element={<Home />} />
               <Route path="/jobs" element={<Job />} />
+              <Route path="/jobs/:id" element={<JobDetails />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
           
