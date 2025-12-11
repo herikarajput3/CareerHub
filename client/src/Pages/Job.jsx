@@ -42,10 +42,14 @@ const Job = () => {
   };
 
   const filteredJobs = jobs.filter((job) => {
-    const term = searchTerm.toLowerCase().trim();
+    const safe = (v) => (v ?? "").toString().toLowerCase().trim();
+    const term = safe(searchTerm);
+    const title = safe(job.title);
+    const company = safe(getCompanyName(job));
+
     const companyName = getCompanyName(job).toLowerCase();
 
-    const matchesSearch = term === "" || job.title.toLowerCase().includes(term) || companyName.includes(term);
+    const matchesSearch = term === "" || title.includes(term) || company.includes(term);
 
     const matchesLocation = locationFilter.trim() === "" || job.location.toLowerCase().includes(locationFilter.toLowerCase());
 
