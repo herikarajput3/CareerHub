@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const JobCard = ({ job }) => {
 
     const formatDate = (dateString) => {
@@ -93,11 +95,11 @@ const JobCard = ({ job }) => {
                         </span>
                     </div>
                 </div>
-                
+
                 <div className="card-actions mt-4 justify-end">
-                    <button className="btn btn-sm btn-outline">
+                    <Link to={`/jobs/${job._id}`} className="btn btn-sm btn-outline">
                         View Details
-                    </button>
+                    </Link>
                 </div>
             </div>
         </article>
