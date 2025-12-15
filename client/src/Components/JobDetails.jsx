@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import JobDetailsSkeleton from "./JobDetailsSkeleton";
+import { useAuth } from "../Context/AuthContext";
 
 const JobDetails = () => {
     const { id } = useParams();
@@ -9,6 +10,7 @@ const JobDetails = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const isAuthenticated = false;
+    const { user } = useAuth();
     const navigate = useNavigate();
 
     const formatDate = (dateString) => {
@@ -21,11 +23,9 @@ const JobDetails = () => {
     };
 
     const handleApply = () => {
-        if (isAuthenticated) {
-            alert('Applied Successfully');
-        }
-        else {
+        if (!user) {
             navigate('/login');
+            return;
         }
     }
 
