@@ -3,6 +3,7 @@ import JobCard from '../Components/JobCard';
 import axios from 'axios';
 
 const Job = () => {
+  const [searchInput, setSearchInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
@@ -11,6 +12,14 @@ const Job = () => {
   const [jobs, setJobs] = useState([]);
   const [isloading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchTerm(searchInput);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -47,15 +56,13 @@ const Job = () => {
     const title = safe(job.title);
     const company = safe(getCompanyName(job));
 
-    const companyName = getCompanyName(job).toLowerCase();
-
     const matchesSearch = term === "" || title.includes(term) || company.includes(term);
 
     const matchesLocation = locationFilter.trim() === "" || job.location.toLowerCase().includes(locationFilter.toLowerCase());
 
-    const matchesType = typeFilter === "" || job.jobType === typeFilter;
+    const matchesType = typeFilter === "" || job.jobType.toLowerCase() === typeFilter;
 
-    const matchesLevel = levelFilter === "" || job.jobLevel === levelFilter;
+    const matchesLevel = levelFilter === "" || job.jobLevel.toLowerCase() === levelFilter;
 
     return (
       matchesSearch &&
@@ -84,8 +91,8 @@ const Job = () => {
             type="text"
             placeholder="Search by title or company"
             className="input input-sm sm:input-md input-bordered w-full"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
           />
 
           <input

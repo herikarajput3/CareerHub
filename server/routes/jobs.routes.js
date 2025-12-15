@@ -7,6 +7,6 @@ const router = express.Router();
 router.post('/', jwtAuthMiddleware, createJob);
 router.get('/', getJobs); // public route
 router.get('/myJobs', jwtAuthMiddleware, getMyJobs);
-router.get('/:id', jwtAuthMiddleware, getJobById);
+router.get('/:id', getJobById);
 
 module.exports = router;
