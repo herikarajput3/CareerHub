@@ -9,7 +9,7 @@ const JobDetails = () => {
     const [job, setJob] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    const isAuthenticated = false;
+    const isAuthenticated = true;
     const { user } = useAuth();
     const navigate = useNavigate();
 
