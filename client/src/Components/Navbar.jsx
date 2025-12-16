@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react"
-import { Link, NavLink } from "react-router-dom"
+import { Link, NavLink, useNavigate } from "react-router-dom"
+import { useAuth } from "../Context/AuthContext";
 const Navbar = () => {
     const [theme, setTheme] = useState('light');
-    const userRole = "candidate";
-    const isGuest = userRole === "guest";
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
+    const userRole = user?.role;
 
     const primaryLinks = [
         { to: "/", label: "Home" },
@@ -27,14 +29,13 @@ const Navbar = () => {
 
     const navlinks = [
         ...primaryLinks,
-        ...authLinks[userRole],
+        ...(user ? authLinks[userRole] || [] : []),
         ...secondaryLinks
     ];
-
-    const profileLinks = [
-        { to: "/profile", label: "Profile" },
-        { to: "/logout", label: "Logout" },
-    ]
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    }
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
@@ -139,7 +140,7 @@ const Navbar = () => {
                         )}
                     </button>
 
-                    {isGuest ? (
+                    {!user ? (
                         <div className="hidden sm:flex gap-2">
                             <Link to="/login" className="btn btn-ghost btn-sm">Login</Link>
                             <Link to="/register" className="btn btn-neutral btn-sm text-white">Register</Link>
@@ -151,17 +152,24 @@ const Navbar = () => {
                                     <img src="https://img.daisyui.com/images/profile/demo/spiderperson@192.webp" />
                                 </div>
                             </div>
-                            <ul
-                                tabIndex={-1}
-                                className="mt-2 dropdown-content menu bg-base-100 rounded-box z-10 w-40 p-2 shadow-sm">
-                                {profileLinks.map((link) => (
-                                    <li key={link.to}>
-                                        <NavLink
-                                            to={link.to}
-                                            className={(link.label === "Logout") ? ("text-sm text-error font-medium") : ("text-sm text-base-content/80 font-medium")}
-                                        >
-                                            {link.label}</NavLink></li>
-                                ))}
+                            <ul className="mt-2 dropdown-content menu bg-base-100 rounded-box z-10 w-40 p-2 shadow-sm">
+                                    <li className="px-3 py-2 text-sm font-semibold border-b border-base-content/10">
+                                    {user.name}
+                                </li>
+
+                                <li>
+                                    <NavLink to="/profile" className="text-sm font-medium">
+                                        Profile
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="text-sm text-error font-medium text-left"
+                                    >
+                                        Logout
+                                    </button>
+                                </li>
                             </ul>
                         </div>
                     )}

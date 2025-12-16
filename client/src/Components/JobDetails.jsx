@@ -27,6 +27,8 @@ const JobDetails = () => {
             navigate('/login');
             return;
         }
+
+        navigate(`/apply/${job._id}`);
     }
 
 
@@ -153,7 +155,7 @@ ${isAuthenticated
                             >Apply Now</button>
 
                         </div>
-                    </aside>
+                    </aside>i'
                 </section>
             </main>
         </>

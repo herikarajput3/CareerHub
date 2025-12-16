@@ -73,7 +73,7 @@ exports.userLogin = async (req, res) => {
         const token = generateToken(user);
 
         if (token) {
-            return res.status(200).json({ message: "User logged in successfully", token, user });
+            return res.status(200).json({ message: "User logged in successfully", token, user:{id:user._id,name:user.name,email:user.email,role:user.role} });
         } else {
             return res.status(400).json({ message: "User login failed" });
         }

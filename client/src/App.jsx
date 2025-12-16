@@ -8,6 +8,9 @@ import Login from './Pages/Auth/Login'
 import Register from './Pages/Auth/Register'
 import Layout from './Layout/Layout'
 import JobDetails from './Components/JobDetails'
+import ProtectedRoute from './Routes/ProtectedRoute'
+import ApplyJob from './Pages/Candidate/ApplyJob'
+import PostJob from './Pages/Recruiter/PostJob'
 
 function App() {
   return (
@@ -25,7 +28,27 @@ function App() {
               <Route path="/jobs/:id" element={<JobDetails />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
-          
+
+              {/* candidate routes */}
+
+              <Route
+                path="/apply/:jobId"
+                element={
+                <ProtectedRoute allowedRoles={["candidate"]}>
+                  <ApplyJob />
+                </ProtectedRoute>
+              }
+              />
+              
+              <Route
+              path="/postjob"
+              element={
+                <ProtectedRoute allowedRoles={["recruiter"]}>
+                  <PostJob />
+                </ProtectedRoute>
+              }
+            />
+
             </Route>
 
           </Routes>
