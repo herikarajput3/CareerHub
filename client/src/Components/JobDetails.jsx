@@ -9,9 +9,25 @@ const JobDetails = () => {
     const [job, setJob] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    const isAuthenticated = true;
-    const { user } = useAuth();
+    const [hasApplied, setHasApplied] = useState(false);
+    const [checkingApplication, setCheckingApplication] = useState(false);
+    const { user, token } = useAuth();
     const navigate = useNavigate();
+
+    let applyAction = null;
+
+    if (!job.isOpen) {
+        applyAction = "closed";
+    } else if (!user) {
+        applyAction = "login";
+    } else if (user.role !== "candidate") {
+        applyAction = "hidden";
+    } else if (hasApplied) {
+        applyAction = "applied";
+    } else {
+        applyAction = "apply";
+    }
+
 
     const formatDate = (dateString) => {
         if (!dateString) return "";
@@ -31,6 +47,34 @@ const JobDetails = () => {
         navigate(`/apply/${job._id}`);
     }
 
+
+    useEffect(() => {
+        const checkApplicationStatus = async () => {
+            if (!user || user.role !== 'candidate' || !job?._id) {
+                return;
+            }
+
+            try {
+                setCheckingApplication(true);
+                const res = await axios.get(
+                    `http://localhost:5000/api/application/check/${job._id}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+                setHasApplied(res.data.applied);
+                console.log("has applied:", res.data.applied);
+
+            } catch (error) {
+                console.error("Error checking application status:", error);
+            } finally {
+                setCheckingApplication(false);
+            }
+        };
+        checkApplicationStatus();
+    }, [user, job]);
 
     useEffect(() => {
         const fetchJob = async () => {
@@ -140,24 +184,50 @@ const JobDetails = () => {
                                 <div className="text-base font-medium mt-1">{job.salary}</div>
                             </div>
 
-                            <button
-                                type="button"
-                                disabled={!isAuthenticated}
-                                className={`btn w-full mt-6 sm:w-auto px-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary
-${isAuthenticated
-                                        ? "btn-outline border-orange-500 text-orange-600 hover:bg-orange-50"
-                                        : "btn-disabled"
-                                    }`}
+                            {user?.role === "candidate" && (
+                                <button
+                                    type="button"
+                                    className="btn w-full mt-6 sm:w-auto px-6 btn-outline border-orange-500 text-orange-600 hover:bg-orange-50"
+                                    onClick={handleApply}>
+                                    Apply Now
+                                </button>
+                            )}
 
-                                aria-label="Apply for this job"
-                                onClick={handleApply}
+                            {applyAction === "closed" && (
+                                <button className="btn w-full mt-6" disabled>
+                                    Job Closed
+                                </button>
+                            )}
 
-                            >Apply Now</button>
+
+                            {applyAction === "login" && (
+                                <button
+                                    className="btn w-full mt-6 btn-outline"
+                                    onClick={() => navigate("/login")}
+                                >
+                                    Login to Apply
+                                </button>
+                            )}
+
+                            {applyAction === "applied" && (
+                                <button className="btn w-full mt-6 btn-success" disabled>
+                                    Already Applied
+                                </button>
+                            )}
+                            {applyAction === "apply" && (
+                                <button
+                                    className="btn w-full mt-6 btn-outline border-orange-500 text-orange-600 hover:bg-orange-50"
+                                    onClick={handleApply}
+                                >
+                                    Apply Now
+                                </button>
+                            )}
+
 
                         </div>
-                    </aside>i'
+                    </aside>
                 </section>
-            </main>
+            </main >
         </>
     )
 }

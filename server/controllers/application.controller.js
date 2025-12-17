@@ -164,3 +164,18 @@ exports.updateApplicationStatus = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+exports.checkIfApplied = async (req, res) => {
+    try {
+        const application = await Application.findOne({
+            jobId: req.params.jobId,
+            candidateId: req.user.id
+        });
+
+        res.json({
+            applied: !!application
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
