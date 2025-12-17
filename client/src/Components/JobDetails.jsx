@@ -16,7 +16,9 @@ const JobDetails = () => {
 
     let applyAction = null;
 
-    if (!job.isOpen) {
+    if (!job) {
+        applyAction = null
+    } else if (!job.isOpen) {
         applyAction = "closed";
     } else if (!user) {
         applyAction = "login";
@@ -44,15 +46,15 @@ const JobDetails = () => {
             return;
         }
 
+        if (!job) return;
+
         navigate(`/apply/${job._id}`);
     }
 
 
     useEffect(() => {
         const checkApplicationStatus = async () => {
-            if (!user || user.role !== 'candidate' || !job?._id) {
-                return;
-            }
+            if (!user || user.role !== 'candidate' || !job?._id) return;
 
             try {
                 setCheckingApplication(true);
@@ -74,7 +76,7 @@ const JobDetails = () => {
             }
         };
         checkApplicationStatus();
-    }, [user, job]);
+    }, [user, job, token]);
 
     useEffect(() => {
         const fetchJob = async () => {
@@ -183,7 +185,7 @@ const JobDetails = () => {
                                 <div className="text-sm text-base-content/70">Salary</div>
                                 <div className="text-base font-medium mt-1">{job.salary}</div>
                             </div>
-
+{/* 
                             {user?.role === "candidate" && (
                                 <button
                                     type="button"
@@ -191,10 +193,10 @@ const JobDetails = () => {
                                     onClick={handleApply}>
                                     Apply Now
                                 </button>
-                            )}
+                            )} */}
 
                             {applyAction === "closed" && (
-                                <button className="btn w-full mt-6" disabled>
+                                <button className="btn w-full sm:w-auto mt-6" disabled>
                                     Job Closed
                                 </button>
                             )}
@@ -202,7 +204,7 @@ const JobDetails = () => {
 
                             {applyAction === "login" && (
                                 <button
-                                    className="btn w-full mt-6 btn-outline"
+                                    className="btn w-full sm:w-auto mt-6 btn-outline"
                                     onClick={() => navigate("/login")}
                                 >
                                     Login to Apply
@@ -210,13 +212,13 @@ const JobDetails = () => {
                             )}
 
                             {applyAction === "applied" && (
-                                <button className="btn w-full mt-6 btn-success" disabled>
+                                <button className="btn w-full sm:w-auto mt-6 btn-success" disabled>
                                     Already Applied
                                 </button>
                             )}
                             {applyAction === "apply" && (
                                 <button
-                                    className="btn w-full mt-6 btn-outline border-orange-500 text-orange-600 hover:bg-orange-50"
+                                    className="btn w-full sm:w-auto mt-6 btn-outline border-orange-500 text-orange-600 hover:bg-orange-50"
                                     onClick={handleApply}
                                 >
                                     Apply Now

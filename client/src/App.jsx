@@ -11,8 +11,12 @@ import JobDetails from './Components/JobDetails'
 import ProtectedRoute from './Routes/ProtectedRoute'
 import ApplyJob from './Pages/Candidate/ApplyJob'
 import PostJob from './Pages/Recruiter/PostJob'
+import MyJobs from './Pages/Recruiter/MyJobs';
+import { useAuth } from './Context/AuthContext'
 
 function App() {
+  const { user } = useAuth();
+  const role = user?.role;
   return (
     <>
       <div className="min-h-screen">
@@ -24,7 +28,10 @@ function App() {
 
             <Route element={<Layout />}>
               <Route path="/" element={<Home />} />
-              <Route path="/jobs" element={<Job />} />
+              <Route
+                path="/jobs"
+                element={role === "recruiter" ? <MyJobs /> : <Job />} 
+                />
               <Route path="/jobs/:id" element={<JobDetails />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
@@ -34,20 +41,20 @@ function App() {
               <Route
                 path="/apply/:jobId"
                 element={
-                <ProtectedRoute allowedRoles={["candidate"]}>
-                  <ApplyJob />
-                </ProtectedRoute>
-              }
+                  <ProtectedRoute allowedRoles={["candidate"]}>
+                    <ApplyJob />
+                  </ProtectedRoute>
+                }
               />
-              
+
               <Route
-              path="/postjob"
-              element={
-                <ProtectedRoute allowedRoles={["recruiter"]}>
-                  <PostJob />
-                </ProtectedRoute>
-              }
-            />
+                path="/postjob"
+                element={
+                  <ProtectedRoute allowedRoles={["recruiter"]}>
+                    <PostJob />
+                  </ProtectedRoute>
+                }
+              />
 
             </Route>
 
