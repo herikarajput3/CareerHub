@@ -20,7 +20,7 @@ const Navbar = () => {
     const authLinks = {
         guest: [],
         candidate: [
-            { to: "/application", label: "Application" },
+            { to: "/applications", label: "Application" },
         ],
         recruiter: [
             { to: "/postjob", label: "Post Job" },

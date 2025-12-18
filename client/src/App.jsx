@@ -14,6 +14,7 @@ import PostJob from './Pages/Recruiter/PostJob'
 import MyJobs from './Pages/Recruiter/MyJobs';
 import { useAuth } from './Context/AuthContext'
 import MyApplications from './Pages/Candidate/MyApplications'
+import Applicants from './Pages/Recruiter/Applicants'
 
 function App() {
   const { user } = useAuth();
@@ -74,6 +75,16 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+
+              <Route
+                path="/myjobs/:jobId/applicants"
+                element={
+                  <ProtectedRoute allowedRoles={["recruiter"]}>
+                    <Applicants />
+                  </ProtectedRoute>
+                }
+              />
+
 
             </Route>
 
