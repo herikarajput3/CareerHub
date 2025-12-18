@@ -52,6 +52,11 @@ exports.applyJob = async (req, res) => {
 }
 
 exports.getMyApplications = async (req, res) => {
+
+    if (req.user.role !== "candidate") {
+        return res.status(403).json({ message: "Only candidates can check application status" });
+    }
+
     try {
         if (req.user.role !== 'candidate') {
             return res.status(403).json({ message: "Only candidates can view their applications" });

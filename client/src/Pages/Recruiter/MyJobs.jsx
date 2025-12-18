@@ -1,4 +1,3 @@
-// src/Pages/Recruiter/MyJobs.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../Context/AuthContext";
@@ -7,6 +6,7 @@ const MyJobs = () => {
     const { token } = useAuth();
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         const fetchMyJobs = async () => {
@@ -17,15 +17,19 @@ const MyJobs = () => {
                     },
                 });
                 setJobs(res.data.jobs || []);
-            } finally {
+            } catch (err) {
+                setError(err.response?.data?.message || "Failed to load jobs");
+            }
+            finally {
                 setLoading(false);
             }
         };
         fetchMyJobs();
     }, [token]);
 
-    if (loading) return <p className="p-4">Loading...</p>;
 
+    if (loading) return <p className="p-4">Loading...</p>;
+    if (error) return <p className="p-4 text-error">{error}</p>;
     if (!jobs.length) return <p className="p-4">You have not posted any jobs yet.</p>;
 
     return (

@@ -44,6 +44,7 @@ const Login = () => {
       setErrors({
         api: err.response?.data?.message || "Login failed",
       });
+    } finally {
       setLoading(false);
     }
   };

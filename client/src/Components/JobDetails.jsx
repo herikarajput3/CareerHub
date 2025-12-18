@@ -185,15 +185,6 @@ const JobDetails = () => {
                                 <div className="text-sm text-base-content/70">Salary</div>
                                 <div className="text-base font-medium mt-1">{job.salary}</div>
                             </div>
-{/* 
-                            {user?.role === "candidate" && (
-                                <button
-                                    type="button"
-                                    className="btn w-full mt-6 sm:w-auto px-6 btn-outline border-orange-500 text-orange-600 hover:bg-orange-50"
-                                    onClick={handleApply}>
-                                    Apply Now
-                                </button>
-                            )} */}
 
                             {applyAction === "closed" && (
                                 <button className="btn w-full sm:w-auto mt-6" disabled>
@@ -204,7 +195,7 @@ const JobDetails = () => {
 
                             {applyAction === "login" && (
                                 <button
-                                    className="btn w-full sm:w-auto mt-6 btn-outline"
+                                    className="btn w-full sm:w-auto mt-6 btn-outline border-orange-500 text-orange-600 hover:bg-orange-50"
                                     onClick={() => navigate("/login")}
                                 >
                                     Login to Apply

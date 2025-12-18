@@ -13,6 +13,7 @@ import ApplyJob from './Pages/Candidate/ApplyJob'
 import PostJob from './Pages/Recruiter/PostJob'
 import MyJobs from './Pages/Recruiter/MyJobs';
 import { useAuth } from './Context/AuthContext'
+import MyApplications from './Pages/Candidate/MyApplications'
 
 function App() {
   const { user } = useAuth();
@@ -27,11 +28,9 @@ function App() {
             <Route path="/register" element={<Register />} />
 
             <Route element={<Layout />}>
+              {/* public routes */}
               <Route path="/" element={<Home />} />
-              <Route
-                path="/jobs"
-                element={role === "recruiter" ? <MyJobs /> : <Job />} 
-                />
+              <Route path="/jobs" element={<Job />} />
               <Route path="/jobs/:id" element={<JobDetails />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
@@ -48,10 +47,30 @@ function App() {
               />
 
               <Route
+                path="/applications"
+                element={
+                  <ProtectedRoute allowedRoles={["candidate"]}>
+                    <MyApplications />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* recruiter routes */}
+
+              <Route
                 path="/postjob"
                 element={
                   <ProtectedRoute allowedRoles={["recruiter"]}>
                     <PostJob />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/myjobs"
+                element={
+                  <ProtectedRoute allowedRoles={["recruiter"]}>
+                    <MyJobs />
                   </ProtectedRoute>
                 }
               />
