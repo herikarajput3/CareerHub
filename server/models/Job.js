@@ -30,7 +30,7 @@ const jobSchema = new Schema({
     }],
     jobLevel: {
         type: String,
-        enum: ['entry level', 'mid level', 'senior level'],
+        enum: ['junior level', 'mid level', 'senior level'],
         lowercase: true,
         required: true
     },

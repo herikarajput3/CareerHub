@@ -11,7 +11,6 @@ const MyJobs = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    // ---------------- FETCH RECRUITER JOBS ----------------
     useEffect(() => {
         const fetchMyJobs = async () => {
             try {
@@ -29,9 +28,8 @@ const MyJobs = () => {
 
                 setJobs(res.data.jobs || []);
             } catch (err) {
-                console.error(err);
                 setError(
-                    err.response?.data?.message || "Failed to load jobs"
+                    err.response?.data?.message || "Failed to load your jobs"
                 );
             } finally {
                 setLoading(false);
@@ -41,84 +39,97 @@ const MyJobs = () => {
         fetchMyJobs();
     }, [token]);
 
-    // ---------------- UI STATES ----------------
+    /* ---------------- UI STATES ---------------- */
+
     if (loading) {
-        return <p className="p-6 text-center">Loading your jobs...</p>;
+        return (
+            <main className="max-w-5xl mx-auto px-4 py-20 text-center">
+                <p className="text-base-content/60">
+                    Loading your posted jobs…
+                </p>
+            </main>
+        );
     }
 
     if (error) {
         return (
-            <p className="p-6 text-center text-error">
-                {error}
-            </p>
+            <main className="max-w-5xl mx-auto px-4 py-20 text-center">
+                <p className="text-error">{error}</p>
+            </main>
         );
     }
 
     if (!jobs.length) {
         return (
-            <p className="p-6 text-center">
-                You have not posted any jobs yet.
-            </p>
+            <main className="max-w-5xl mx-auto px-4 py-20 text-center">
+                <h2 className="text-2xl font-semibold">
+                    You haven’t posted any jobs yet
+                </h2>
+                <p className="text-base-content/60 mt-2">
+                    Start by posting your first job to receive applications.
+                </p>
+                <button
+                    onClick={() => navigate("/postjob")}
+                    className="btn btn-outline border-orange-500 text-orange-600 hover:bg-orange-50 mt-6"
+                >
+                    Post a Job
+                </button>
+            </main>
         );
     }
 
-    // ---------------- MAIN UI ----------------
-    return (
-        <main className="max-w-5xl mx-auto px-4 py-8">
-            <h1 className="text-2xl font-bold mb-6">
-                My Posted Jobs
-            </h1>
+    /* ---------------- MAIN UI ---------------- */
 
+    const openJobs = jobs.filter((j) => j.isOpen).length;
+
+    return (
+        <main className="max-w-5xl mx-auto px-4 py-10">
+            {/* HEADER */}
+            <div className="mb-6">
+                <h1 className="text-3xl font-bold">My Posted Jobs</h1>
+                <p className="text-base-content/60 mt-1">
+                    {jobs.length} jobs • {openJobs} currently open
+                </p>
+            </div>
+
+            {/* JOB LIST */}
             <div className="space-y-4">
                 {jobs.map((job) => (
                     <div
                         key={job._id}
-                        className="border border-base-200 rounded-lg p-4 bg-base-100"
+                        className="rounded-xl border border-base-200 bg-base-100 p-5 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
                     >
-                        {/* JOB TITLE */}
-                        <h2 className="text-lg font-semibold">
-                            {job.title}
-                        </h2>
+                        {/* LEFT */}
+                        <div>
+                            <h2 className="text-lg font-semibold">
+                                {job.title}
+                            </h2>
+                            <p className="text-sm text-base-content/60 mt-1">
+                                {job.location} • {job.jobType}
+                            </p>
+                        </div>
 
-                        {/* JOB META */}
-                        <p className="text-sm text-base-content/70">
-                            {job.location} • {job.jobType}
-                        </p>
-
-                        {/* STATUS */}
-                        <span
-                            className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium
+                        {/* RIGHT */}
+                        <div className="flex items-center gap-3">
+                            <span
+                                className={`px-3 py-1 rounded-full text-xs font-medium
                 ${job.isOpen
-                                    ? "bg-green-100 text-green-700"
-                                    : "bg-gray-200 text-gray-600"
-                                }`}
-                        >
-                            {job.isOpen ? "OPEN" : "CLOSED"}
-                        </span>
+                                        ? "bg-green-100 text-green-700"
+                                        : "bg-gray-200 text-gray-600"
+                                    }`}
+                            >
+                                {job.isOpen ? "OPEN" : "CLOSED"}
+                            </span>
 
-                        {/* ACTIONS */}
-                        <div className="mt-4">
                             <button
-                                className="btn btn-sm btn-outline"
                                 onClick={() =>
-                                    navigate(
-                                        `/myjobs/${job._id}/applicants`
-                                    )
+                                    navigate(`/myjobs/${job._id}/applicants`)
                                 }
+                                className="btn btn-sm btn-outline border-orange-500 text-orange-600 hover:bg-orange-50"
                             >
                                 View Applicants
                             </button>
                         </div>
-
-                        {/*
-              ❌ Beginner mistake:
-              - Fetching applicants here
-              - Mixing dashboard & detail logic
-
-              ✅ Correct:
-              - Navigate to Applicants page
-              - Let that page fetch data
-            */}
                     </div>
                 ))}
             </div>

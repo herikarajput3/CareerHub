@@ -15,6 +15,7 @@ import MyJobs from './Pages/Recruiter/MyJobs';
 import { useAuth } from './Context/AuthContext'
 import MyApplications from './Pages/Candidate/MyApplications'
 import Applicants from './Pages/Recruiter/Applicants'
+import JobsRedirect from './Pages/JobsRedirect'
 
 function App() {
   const { user } = useAuth();
@@ -31,7 +32,8 @@ function App() {
             <Route element={<Layout />}>
               {/* public routes */}
               <Route path="/" element={<Home />} />
-              <Route path="/jobs" element={<Job />} />
+              <Route path="/jobs" element={<JobsRedirect />} />
+              <Route path="/jobs/list" element={<Job />} />
               <Route path="/jobs/:id" element={<JobDetails />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />

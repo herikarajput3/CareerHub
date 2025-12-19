@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, NavLink, useNavigate } from "react-router-dom"
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../Context/AuthContext";
 const Navbar = () => {
     const [theme, setTheme] = useState('light');
@@ -7,9 +7,16 @@ const Navbar = () => {
     const navigate = useNavigate();
     const userRole = user?.role;
 
+    const location = useLocation();
+    const pathname = location.pathname;
+
+    const isJobsActive =
+        pathname.startsWith("/jobs") ||
+        pathname.startsWith("/myjobs");
+
+
     const primaryLinks = [
         { to: "/", label: "Home" },
-        { to: "/jobs", label: "Jobs" },
     ];
 
     const secondaryLinks = [
@@ -69,14 +76,64 @@ const Navbar = () => {
                         </div>
                         <ul
                             tabIndex={0}
-                            className="dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-3 shadow space-y-1" >
+                            className="dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-3 shadow space-y-1"
+                        >
+                            {/* Home */}
+                            <li>
+                                <NavLink
+                                    to="/"
+                                    className={({ isActive }) =>
+                                        `block text-sm px-2 py-1 rounded-md ${isActive
+                                            ? "text-orange-600 font-semibold bg-base-200"
+                                            : "text-base-content hover:bg-base-200"
+                                        }`
+                                    }
+                                >
+                                    Home
+                                </NavLink>
+                            </li>
 
-                            {navlinks.map((link) => (
+                            {/* Jobs (CUSTOM ACTIVE LOGIC) */}
+                            <li>
+                                <NavLink
+                                    to="/jobs"
+                                    className={() =>
+                                        `block text-sm px-2 py-1 rounded-md ${isJobsActive
+                                            ? "text-orange-600 font-semibold bg-base-200"
+                                            : "text-base-content hover:bg-base-200"
+                                        }`
+                                    }
+                                >
+                                    Jobs
+                                </NavLink>
+                            </li>
+
+                            {/* Role-based links */}
+                            {(user ? authLinks[userRole] || [] : []).map((link) => (
                                 <li key={link.to}>
                                     <NavLink
                                         to={link.to}
                                         className={({ isActive }) =>
-                                            `block text-sm px-2 py-1 rounded-md ${isActive ? "text-orange-600 font-semibold bg-base-200" : "text-base-content hover:bg-base-200"
+                                            `block text-sm px-2 py-1 rounded-md ${isActive
+                                                ? "text-orange-600 font-semibold bg-base-200"
+                                                : "text-base-content hover:bg-base-200"
+                                            }`
+                                        }
+                                    >
+                                        {link.label}
+                                    </NavLink>
+                                </li>
+                            ))}
+
+                            {/* About / Contact */}
+                            {secondaryLinks.map((link) => (
+                                <li key={link.to}>
+                                    <NavLink
+                                        to={link.to}
+                                        className={({ isActive }) =>
+                                            `block text-sm px-2 py-1 rounded-md ${isActive
+                                                ? "text-orange-600 font-semibold bg-base-200"
+                                                : "text-base-content hover:bg-base-200"
                                             }`
                                         }
                                     >
@@ -85,6 +142,7 @@ const Navbar = () => {
                                 </li>
                             ))}
                         </ul>
+
                     </div>
                     {/* Logo */}
                     <Link
@@ -98,7 +156,33 @@ const Navbar = () => {
 
                 <div className="navbar-center hidden lg:flex">
                     <nav className="flex items-center gap-6 text-sm font-medium">
-                        {navlinks.map((link) => (
+                        <NavLink
+                            to="/"
+                            className={({ isActive }) =>
+                                `relative pb-1 text-sm font-medium border-b-2 transition-all duration-500 ${isActive
+                                    ? "text-orange-600 border-orange-600"
+                                    : "text-base-content/80 border-transparent hover:text-orange-600 hover:border-orange-400"
+                                }`
+                            }
+                        >
+                            Home
+                        </NavLink>
+
+                        {/* Jobs (CUSTOM ACTIVE LOGIC) */}
+                        <NavLink
+                            to="/jobs"
+                            className={() =>
+                                `relative pb-1 text-sm font-medium border-b-2 transition-all duration-500 ${isJobsActive
+                                    ? "text-orange-600 border-orange-600"
+                                    : "text-base-content/80 border-transparent hover:text-orange-600 hover:border-orange-400"
+                                }`
+                            }
+                        >
+                            Jobs
+                        </NavLink>
+
+                        {/* Other links */}
+                        {(user ? authLinks[userRole] || [] : []).map((link) => (
                             <NavLink
                                 key={link.to}
                                 to={link.to}
@@ -106,13 +190,29 @@ const Navbar = () => {
                                     `relative pb-1 text-sm font-medium border-b-2 transition-all duration-500 ${isActive
                                         ? "text-orange-600 border-orange-600"
                                         : "text-base-content/80 border-transparent hover:text-orange-600 hover:border-orange-400"
-                                    } `
+                                    }`
                                 }
                             >
                                 {link.label}
                             </NavLink>
-
                         ))}
+
+                        {/* About / Contact */}
+                        {secondaryLinks.map((link) => (
+                            <NavLink
+                                key={link.to}
+                                to={link.to}
+                                className={({ isActive }) =>
+                                    `relative pb-1 text-sm font-medium border-b-2 transition-all duration-500 ${isActive
+                                        ? "text-orange-600 border-orange-600"
+                                        : "text-base-content/80 border-transparent hover:text-orange-600 hover:border-orange-400"
+                                    }`
+                                }
+                            >
+                                {link.label}
+                            </NavLink>
+                        ))}
+
                     </nav>
                 </div>
 
@@ -153,7 +253,7 @@ const Navbar = () => {
                                 </div>
                             </div>
                             <ul className="mt-2 dropdown-content menu bg-base-100 rounded-box z-10 w-40 p-2 shadow-sm">
-                                    <li className="px-3 py-2 text-sm font-semibold border-b border-base-content/10">
+                                <li className="px-3 py-2 text-sm font-semibold border-b border-base-content/10">
                                     {user.name}
                                 </li>
 
