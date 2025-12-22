@@ -127,3 +127,110 @@ exports.getJobById = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+exports.updateJob = async (req, res) => {
+    try {
+
+        // ✅ Only recruiter allowed
+        if (req.user.role !== 'recruiter') {
+            return res.status(403).json({ message: "Only recruiters can update jobs" });
+        }
+
+        const job = await Job.findById(req.params.id);
+
+        if (!job) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        if (job.recruiter.toString() !== req.user.id) {
+            return res.status(403).json({ message: "You are not allowed to update this job" });
+        }
+
+        const { title, description, location, jobType, salary, skillsRequired, jobLevel, experience } = req.body;
+
+        if (title) job.title = title;
+        if (description) job.description = description;
+        if (location) job.location = location;
+        if (jobType) job.jobType = jobType;
+        if (salary) job.salary = salary;
+        if (jobLevel) job.jobLevel = jobLevel;
+        if (experience) job.experience = experience;
+
+        if (skillsRequired) {
+            job.skillsRequired = skillsRequired
+                .split(",")
+                .map((skill) => skill.trim());
+        }
+
+        await job.save();
+
+        res.status(200).json({
+            message: "Job updated successfully",
+            job
+        });
+
+    } catch (error) {
+        console.error("Error while updating job", error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
+exports.updateJobStatus = async (req, res) => {
+    try {
+        if (req.user.role !== 'recruiter') {
+            return res.status(403).json({ message: "Only recruiters can update job status" });
+        }
+
+        const { isOpen } = req.body;
+        const job = await Job.findById(req.params.id);
+
+        if (!job) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        if (job.recruiter.toString() !== req.user.id) {
+            return res.status(403).json({ message: "You are not allowed to update this job" });
+        }
+
+        job.isOpen = isOpen;
+        await job.save();
+
+        res.status(200).json({
+            message: "Job status updated successfully",
+            job
+        });
+    } catch (error) {
+        console.error("Error while updating job status", error);
+        res.status(500).json({ message: error.message });
+    }
+}
+exports.deleteJob = async (req, res) => {
+    try {
+        if (req.user.role !== "recruiter") {
+            return res.status(403).json({
+                message: "Only recruiters can delete jobs",
+            });
+        }
+
+        const job = await Job.findById(req.params.id);
+
+        if (!job) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        if (job.recruiter.toString() !== req.user.id) {
+            return res.status(403).json({
+                message: "You are not allowed to delete this job",
+            });
+        }
+
+        await job.deleteOne();
+
+        res.status(200).json({
+            message: "Job deleted successfully",
+        });
+    } catch (error) {
+        console.error("Error while deleting job", error);
+        res.status(500).json({ message: error.message });
+    }
+};

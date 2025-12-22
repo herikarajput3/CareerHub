@@ -153,11 +153,10 @@ exports.updateApplicationStatus = async (req, res) => {
         application.status = status.toLowerCase();
         await application.save();
 
-        // (Optional) Agar accepted hai to job close kar do
-        if (application.status === "accepted") {
-            application.jobId.isOpen = false;
-            await application.jobId.save();
-        }
+        // if (application.status === "accepted") {
+        //     application.jobId.isOpen = false;
+        //     await application.jobId.save();
+        // }
 
         res.status(200).json({
             message: "Application status updated successfully",
