@@ -2,56 +2,57 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
+import JobForm from "../../Components/JobForm";
 
 const PostJob = () => {
-  const { token } = useAuth();
-  const navigate = useNavigate();
+  // const { token } = useAuth();
+  // const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    title: "",
-    location: "",
-    jobType: "",
-    salary: "",
-    experience: "",
-    jobLevel: "",
-    skillsRequired: "",
-    description: "",
-  });
+  // const [formData, setFormData] = useState({
+  //   title: "",
+  //   location: "",
+  //   jobType: "",
+  //   salary: "",
+  //   experience: "",
+  //   jobLevel: "",
+  //   skillsRequired: "",
+  //   description: "",
+  // });
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  // const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
 
-    try {
-      setLoading(true);
-      setError("");
+  //   try {
+  //     setLoading(true);
+  //     setError("");
 
-      await axios.post(
-        "http://localhost:5000/api/jobs",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  //     await axios.post(
+  //       "http://localhost:5000/api/jobs",
+  //       formData,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
 
-      navigate("/myjobs");
-    } catch (err) {
-      setError(
-        err.response?.data?.message || "Failed to post job"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     navigate("/myjobs");
+  //   } catch (err) {
+  //     setError(
+  //       err.response?.data?.message || "Failed to post job"
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-12">
@@ -64,11 +65,10 @@ const PostJob = () => {
       </div>
 
       {/* Form Card */}
-      <form
+      {/* <form
         onSubmit={handleSubmit}
         className="rounded-xl border border-base-200 bg-base-100 p-6 shadow-sm space-y-6"
       >
-        {/* BASIC INFO */}
         <div>
           <h2 className="text-lg font-semibold mb-3">
             Basic Information
@@ -127,7 +127,6 @@ const PostJob = () => {
           </div>
         </div>
 
-        {/* DETAILS */}
         <div>
           <h2 className="text-lg font-semibold mb-3">
             Job Details
@@ -179,7 +178,6 @@ const PostJob = () => {
           </div>
         )}
 
-        {/* ACTION */}
         <div className="pt-4">
           <button
             type="submit"
@@ -193,7 +191,9 @@ const PostJob = () => {
             {loading ? "Posting…" : "Post Job"}
           </button>
         </div>
-      </form>
+      </form> */}
+
+      <JobForm mode="create" />
     </main>
   );
 };
