@@ -31,7 +31,6 @@ const JobForm = ({ mode = "create", jobId }) => {
                     const res = await axios.get(`http://localhost:5000/api/jobs/${jobId}`);
 
                     const job = res.data.job;
-                    console.log("edit mode job:", job);
 
                     setFormData({
                         title: job.title || "",

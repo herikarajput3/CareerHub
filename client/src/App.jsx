@@ -16,6 +16,8 @@ import { useAuth } from './Context/AuthContext'
 import MyApplications from './Pages/Candidate/MyApplications'
 import Applicants from './Pages/Recruiter/Applicants'
 import JobsRedirect from './Pages/JobsRedirect'
+import EditJob from './Pages/Recruiter/EditJob'
+import { Toaster } from 'react-hot-toast'
 
 function App() {
   const { user } = useAuth();
@@ -87,11 +89,21 @@ function App() {
                 }
               />
 
+              <Route
+                path="/myjobs/:jobId/edit"
+                element={
+                  <ProtectedRoute allowedRoles={["recruiter"]}>
+                    <EditJob />
+                  </ProtectedRoute>
+                }
+              />
+
 
             </Route>
 
           </Routes>
         </Router>
+        <Toaster />
       </div>
     </>
   )
