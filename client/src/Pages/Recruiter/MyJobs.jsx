@@ -168,7 +168,7 @@ const MyJobs = () => {
                         </div>
 
                         {/* RIGHT */}
-                        <div className="flex flex-col items-end gap-3 min-w-[240px]">
+                        <div className="flex flex-col items-end gap-3 min-w-60">
 
                             {/* STATUS */}
                             <span

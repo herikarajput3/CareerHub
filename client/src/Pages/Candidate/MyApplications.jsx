@@ -1,52 +1,33 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../Context/AuthContext";
-import axios from "axios";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance";
 
+// we don't need error state because user can't fix error by changing input. this is just fetching data so we remove it. 
 const MyApplications = () => {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-    const { token } = useAuth();
 
     useEffect(() => {
         const fetchMyApplications = async () => {
             try {
                 setLoading(true);
-                setError("");
-
-                const res = await axios.get(
-                    "http://localhost:5000/api/application/my",
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-
+                const res = await axiosInstance.get("/application/my");
                 setApplications(res.data.applications);
             } catch (err) {
-                setError(err.response?.data?.message || "Failed to load applications");
+                console.error(err);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchMyApplications();
-    }, [token]);
+    }, []);
 
     if (loading) {
         return (
             <main className="max-w-5xl mx-auto px-4 py-20 text-center">
                 <p className="text-base-content/60">Loading your applications…</p>
-            </main>
-        );
-    }
-
-    if (error) {
-        return (
-            <main className="max-w-5xl mx-auto px-4 py-20 text-center">
-                <p className="text-error">{error}</p>
             </main>
         );
     }

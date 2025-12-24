@@ -1,4 +1,3 @@
-import React from 'react'
 import JobForm from '../../Components/JobForm'
 import { useParams } from 'react-router-dom'
 

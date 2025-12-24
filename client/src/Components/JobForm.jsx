@@ -1,10 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../Context/AuthContext'
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 
 const JobForm = ({ mode = "create", jobId }) => {
-    const { token } = useAuth();
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -28,7 +26,7 @@ const JobForm = ({ mode = "create", jobId }) => {
             const fetchJob = async () => {
                 try {
                     setLoading(true);
-                    const res = await axios.get(`http://localhost:5000/api/jobs/${jobId}`);
+                    const res = await axiosInstance.get(`/jobs/${jobId}`);
 
                     const job = res.data.job;
 
@@ -66,16 +64,12 @@ const JobForm = ({ mode = "create", jobId }) => {
             setError("");
 
             const url = mode === "edit"
-                ? `http://localhost:5000/api/jobs/${jobId}`
-                : "http://localhost:5000/api/jobs";
+                ? `/jobs/${jobId}`
+                : `/jobs`;
 
-            const request = mode === "edit" ? axios.put : axios.post;
+            const request = mode === "edit" ? axiosInstance.put : axiosInstance.post;
 
-            await request(url, formData, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            await request(url, formData);
 
             navigate("/myjobs");
         } catch (err) {

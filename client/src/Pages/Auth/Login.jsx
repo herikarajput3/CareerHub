@@ -1,7 +1,8 @@
 import { useState } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
+import axiosInstance from "../../api/axiosInstance";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -29,15 +30,12 @@ const Login = () => {
       return;
     }
 
-    setErrors({});
     setLoading(true);
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        { email, password }
-      );
+      const res = await axiosInstance.post("/auth/login", { email, password });
       login(res.data.user, res.data.token);
+      toast.success(`Welcome back ${res.data.user.name}`);
       navigate("/");
 
     } catch (err) {

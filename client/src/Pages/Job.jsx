@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import JobCard from '../Components/JobCard';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 
 const Job = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -11,7 +11,6 @@ const Job = () => {
 
   const [jobs, setJobs] = useState([]);
   const [isloading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -25,15 +24,13 @@ const Job = () => {
     const fetchJobs = async () => {
       try {
         setIsLoading(true);
-        setError("");
-
-        const res = await axios.get("http://localhost:5000/api/jobs");
+        const res = await axiosInstance.get("/jobs");
         setJobs(res.data.jobs);
 
-      } catch (error) {
-        console.log(error, "error");
-        setError(error.message);
-      } finally {
+      } catch (err) {
+        console.error(err);
+      }
+      finally {
         setIsLoading(false);
       }
     }
@@ -134,13 +131,15 @@ const Job = () => {
         {/* Yahin cards ka section aayega next step me */}
         {/* Job cards grid */}
         <div className="grid gap-4 md:grid-cols-2">
-          {isloading && <p>Loading...</p>}
-          {error && <p className='text-error'>{error}</p>}
-          {!isloading && !error && filteredJobs.length === 0 && (<p>No jobs found.</p>)}
 
-          {!isloading && !error && filteredJobs.map((job) => (
+          {isloading && <p>Loading...</p>}
+
+          {!isloading && filteredJobs.length === 0 && (<p>No jobs found.</p>)}
+
+          {!isloading && filteredJobs.map((job) => (
             <JobCard key={job._id} job={job} />
           ))}
+
         </div>
 
       </section>

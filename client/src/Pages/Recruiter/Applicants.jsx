@@ -1,57 +1,37 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useAuth } from "../../Context/AuthContext";
+import axiosInstance from "../../api/axiosInstance";
 
 const Applicants = () => {
   const { jobId } = useParams();
-  const { token } = useAuth();
 
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [updatingId, setUpdatingId] = useState(null);
 
   useEffect(() => {
     const fetchApplications = async () => {
       try {
         setLoading(true);
-        setError("");
-
-        const res = await axios.get(
-          `http://localhost:5000/api/application/job/${jobId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
+        const res = await axiosInstance.get(`/application/job/${jobId}`);
         setApplications(res.data.applications);
       } catch (err) {
-        setError(
-          err.response?.data?.message || "Failed to load applicants"
-        );
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchApplications();
-  }, [jobId, token]);
+  }, [jobId]);
 
   const updateStatus = async (applicationId, status) => {
     try {
       setUpdatingId(applicationId);
 
-      await axios.put(
-        "http://localhost:5000/api/application/status",
-        { applicationId, status },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      await aaxiosInstance.put(
+        "/application/status",
+        { applicationId, status }
       );
 
       setApplications((prev) =>
@@ -76,14 +56,6 @@ const Applicants = () => {
         <p className="text-base-content/60">
           Loading applicants…
         </p>
-      </main>
-    );
-  }
-
-  if (error) {
-    return (
-      <main className="max-w-5xl mx-auto px-4 py-20 text-center">
-        <p className="text-error">{error}</p>
       </main>
     );
   }
@@ -147,13 +119,12 @@ const Applicants = () => {
             <div className="flex items-center gap-3 flex-wrap">
               <span
                 className={`px-3 py-1 rounded-full text-xs font-medium
-                ${
-                  app.status === "pending"
+                ${app.status === "pending"
                     ? "bg-yellow-100 text-yellow-700"
                     : app.status === "accepted"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
-                }`}
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
               >
                 {app.status.toUpperCase()}
               </span>

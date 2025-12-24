@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
-import axios from "axios";
+import axiosInstance from "../../api/axiosInstance";
 
 const ApplyJob = () => {
   const { jobId } = useParams();
   const navigate = useNavigate();
-  const { user, token } = useAuth();
+  const { user } = useAuth();
 
   const [resumeUrl, setResumeUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,7 +14,7 @@ const ApplyJob = () => {
   const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     const isValidUrl = (url) => {
       try {
@@ -39,21 +39,16 @@ const ApplyJob = () => {
       setLoading(true);
       setError("");
 
-      await axios.post(
-        "http://localhost:5000/api/application",
-        { jobId, resumeUrl },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axiosInstance.post("/application", {
+        jobId,
+        resumeUrl,
+      });
 
       setSuccess("Application submitted successfully");
 
       setTimeout(() => navigate("/jobs"), 1500);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to apply for job");
+      console.error(err);
     } finally {
       setLoading(false);
     }

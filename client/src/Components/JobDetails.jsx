@@ -1,17 +1,16 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import JobDetailsSkeleton from "./JobDetailsSkeleton";
 import { useAuth } from "../Context/AuthContext";
+import axiosInstance from "../api/axiosInstance";
 
 const JobDetails = () => {
     const { id } = useParams();
     const [job, setJob] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
     const [hasApplied, setHasApplied] = useState(false);
     const [checkingApplication, setCheckingApplication] = useState(false);
-    const { user, token } = useAuth();
+    const { user } = useAuth();
     const navigate = useNavigate();
 
     let applyAction = null;
@@ -58,17 +57,8 @@ const JobDetails = () => {
 
             try {
                 setCheckingApplication(true);
-                const res = await axios.get(
-                    `http://localhost:5000/api/application/check/${job._id}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
+                const res = await axiosInstance.get(`/application/check/${job._id}`);
                 setHasApplied(res.data.applied);
-                console.log("has applied:", res.data.applied);
-
             } catch (error) {
                 console.error("Error checking application status:", error);
             } finally {
@@ -76,20 +66,17 @@ const JobDetails = () => {
             }
         };
         checkApplicationStatus();
-    }, [user, job, token]);
+    }, [user, job]);
 
     useEffect(() => {
         const fetchJob = async () => {
             try {
                 setLoading(true);
-                setError("");
-
-                const res = await axios.get(`http://localhost:5000/api/jobs/${id}`);
-
+                const res = await axiosInstance.get(`/jobs/${id}`);
                 setJob(res.data.job);
             } catch (error) {
                 console.error(error);
-                setError("Failed to load job");
+                setJob(null);
             } finally {
                 setLoading(false);
             }
@@ -98,7 +85,7 @@ const JobDetails = () => {
     }, [id])
     if (loading) return <JobDetailsSkeleton />;
 
-    if (error) {
+    if (!job && !loading) {
         return (
             <main className="max-w-5xl mx-auto px-4 py-20 text-center">
                 <h2 className="text-xl font-semibold text-error">

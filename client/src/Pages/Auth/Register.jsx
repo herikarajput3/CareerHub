@@ -1,7 +1,8 @@
-import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
+import axiosInstance from "../../api/axiosInstance";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -19,7 +20,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const {login} = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
 
@@ -62,7 +63,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/register", {
+      const res = await axiosInstance.post("/auth/register", {
         name,
         email,
         password,
@@ -72,11 +73,10 @@ const Register = () => {
         skills,
         companyName,
         companyWebsite,
-      }
-      );
+      });
 
       login(res.data.user, res.data.token);
-
+      toast.success(`Welcome ${res.data.user.name}`);
       navigate("/");
 
     } catch (err) {
