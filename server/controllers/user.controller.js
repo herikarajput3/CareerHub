@@ -73,7 +73,7 @@ exports.userLogin = async (req, res) => {
         const token = generateToken(user);
 
         if (token) {
-            return res.status(200).json({ message: "User logged in successfully", token, user:{id:user._id,name:user.name,email:user.email,role:user.role} });
+            return res.status(200).json({ message: "User logged in successfully", token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
         } else {
             return res.status(400).json({ message: "User login failed" });
         }
@@ -83,3 +83,79 @@ exports.userLogin = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 }
+
+exports.getMe = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select("-password");
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json({ message: "User fetched successfully", user });
+    } catch (error) {
+        console.log("Error while getting user", error);
+        res.status(500).json({ message: "Failed to fetch user profile" });
+    }
+};
+
+exports.updateMe = async (req, res) => {
+    try {
+        const updates = { ...req.body };
+        const baseAllowedFields = ["name"];
+
+        const candidateAllowedFields = [
+            ...baseAllowedFields,
+            "bio",
+            "phone",
+            "skills",
+            "resumeUrl",
+            "resumeOriginalName",
+            "profilePhoto",
+        ];
+
+        const recruiterAllowedFields = [
+            ...baseAllowedFields,
+            "companyName",
+            "companyWebsite",
+            "companyLogo",
+            "companyDescription",
+            "companyLocation",
+            "companyPhone",
+        ];
+
+        const allowedFields =
+            req.user.role === "candidate"
+                ? candidateAllowedFields
+                : recruiterAllowedFields
+
+        Object.keys(updates).forEach((key) => {
+            if (!allowedFields.includes(key)) {
+                delete updates[key];
+            }
+        });
+
+        const user = await User.findByIdAndUpdate(
+            req.user.id,
+            updates,
+            {
+                new: true,
+                runValidators: true
+            }
+        ).select("-password");
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json({
+            message: "User updated successfully",
+            user,
+        });
+    } catch (error) {
+        console.log("Error while updating user", error);
+        res.status(500).json(
+            { message: "Failed to update user profile" }
+        )
+    }
+};

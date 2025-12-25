@@ -3,7 +3,7 @@ import Brand from "./Brand";
 
 const CTASection = () => {
   return (
-    <section className="bg-gradient-to-b from-base-200/40 to-transparent py-28">
+    <section className="bg-linear-to-b from-base-200/40 to-transparent py-28">
       <div className="max-w-6xl mx-auto px-4 text-center">
 
         <h2 className="text-3xl font-bold">
