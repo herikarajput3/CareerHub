@@ -18,6 +18,7 @@ import Applicants from './Pages/Recruiter/Applicants'
 import JobsRedirect from './Pages/JobsRedirect'
 import EditJob from './Pages/Recruiter/EditJob'
 import { Toaster } from 'react-hot-toast'
+import Dashboard from './Pages/Dashboard'
 
 function App() {
   const { user } = useAuth();
@@ -39,6 +40,15 @@ function App() {
               <Route path="/jobs/:id" element={<JobDetails />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={["candidate", "recruiter"]}>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* candidate routes */}
 
