@@ -1,20 +1,20 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const port = process.env.PORT || 3000
+
+require('dotenv').config()
+require('./config/db')
 
 app.use(cors())
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
-require('dotenv').config()
-const port = process.env.PORT || 3000
-require('./config/db')
 const authRoutes = require('./routes/auth.routes');
 const jobsRoutes = require('./routes/jobs.routes');
 const applicationRoutes = require('./routes/application.routes');
 const userRoutes = require('./routes/user.routes')
-
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
 
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobsRoutes);

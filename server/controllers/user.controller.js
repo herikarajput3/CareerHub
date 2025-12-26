@@ -8,6 +8,7 @@ exports.userRegister = async (req, res) => {
     try {
         const { name, email, password, role, bio, phone, skills, resumeUrl, companyName, companyWebsite } = req.body;
 
+        console.log(req.body);
         if (!name || !email || !password || !role) {
             return res.status(400).json({ message: "Name, email, password, role required" });
         }
@@ -134,6 +135,8 @@ exports.updateMe = async (req, res) => {
                 delete updates[key];
             }
         });
+
+        console.log("Update keys requested:", Object.keys(req.body));
 
         const user = await User.findByIdAndUpdate(
             req.user.id,
