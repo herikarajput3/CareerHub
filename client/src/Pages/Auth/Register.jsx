@@ -84,6 +84,7 @@ const Register = () => {
       setErrors({
         api: err.response?.data?.message || "Registration failed",
       });
+      toast.error(err.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
