@@ -55,8 +55,7 @@ Rather than overloading features, CareerHub focuses on **correctness, scalabilit
 
 ## 🧠 UX & Architecture Highlights
 
-* View-first profile pages (no forced editing)
-* Edit mode with prefilled forms
+* Edit user profile
 * Centralized API handling using Axios Interceptors
 * Global authentication & error handling
 * Local UI states for loading and empty screens
