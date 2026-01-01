@@ -170,6 +170,8 @@ exports.updateApplicationStatus = async (req, res) => {
 }
 
 exports.checkIfApplied = async (req, res) => {
+    if (req.user.role !== "candidate") return 403;
+
     try {
         const application = await Application.findOne({
             jobId: req.params.jobId,

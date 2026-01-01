@@ -12,7 +12,6 @@ import ProtectedRoute from './Routes/ProtectedRoute'
 import ApplyJob from './Pages/Candidate/ApplyJob'
 import PostJob from './Pages/Recruiter/PostJob'
 import MyJobs from './Pages/Recruiter/MyJobs';
-import { useAuth } from './Context/AuthContext'
 import MyApplications from './Pages/Candidate/MyApplications'
 import Applicants from './Pages/Recruiter/Applicants'
 import JobsRedirect from './Pages/JobsRedirect'
@@ -21,8 +20,6 @@ import { Toaster } from 'react-hot-toast'
 import Dashboard from './Pages/Dashboard'
 
 function App() {
-  const { user } = useAuth();
-  const role = user?.role;
   return (
     <>
       <div className="min-h-screen">
