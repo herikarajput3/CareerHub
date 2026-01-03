@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 // Step 1: Create an instance of axios which will be used to make API requests
 
 const axiosInstance = axios.create({
-    baseURL: "http://localhost:5000/api",
+    baseURL: "http://localhost:3000/api",
 });
 
 // Step 2: Add a request interceptor to the instance to add the token to the request headers

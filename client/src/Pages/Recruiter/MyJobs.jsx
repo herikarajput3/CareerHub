@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useAuth } from "../../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import axiosInstance from "../../api/axiosInstance";
 
 const MyJobs = () => {
     const { token } = useAuth();
@@ -20,15 +20,7 @@ const MyJobs = () => {
             try {
                 setLoading(true);
                 setError("");
-
-                const res = await axios.get(
-                    "http://localhost:5000/api/jobs/myJobs",
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
+                const res = await axiosInstance.get("/jobs/myJobs");
 
                 setJobs(res.data.jobs || []);
             } catch (err) {
@@ -46,15 +38,7 @@ const MyJobs = () => {
     const toggleJobStatus = async (jobId, currentStatus) => {
         try {
             setLoadingJobId(jobId);
-            await axios.put(
-                `http://localhost:5000/api/jobs/${jobId}/status`,
-                { isOpen: !currentStatus },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
-                }
-            );
+            await axiosInstance.put(`jobs/${jobId}/status`, { isOpen: !currentStatus });
 
             setJobs((prev) =>
                 prev.map((job) =>
@@ -77,14 +61,7 @@ const MyJobs = () => {
 
     const handleDeleteJob = async () => {
         try {
-            await axios.delete(
-                `http://localhost:5000/api/jobs/${jobToDelete}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+            await axiosInstance.delete(`/jobs/${jobToDelete}`);
 
             setJobs((prev) =>
                 prev.filter((job) => job._id !== jobToDelete)

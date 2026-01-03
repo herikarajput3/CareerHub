@@ -29,7 +29,7 @@ const Applicants = () => {
     try {
       setUpdatingId(applicationId);
 
-      await aaxiosInstance.put(
+      await axiosInstance.put(
         "/application/status",
         { applicationId, status }
       );
