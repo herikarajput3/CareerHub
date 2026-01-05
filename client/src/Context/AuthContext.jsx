@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import axiosInstance from "../api/axiosInstance";
 
 const AuthContext = createContext();
 
@@ -8,7 +9,28 @@ export const AuthProvider = ({ children }) => {
     );
 
     const [token, setToken] = useState(localStorage.getItem("token") || null);
+    const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        const fetchMe = async () => {
+            if (!token) {
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const res = await axiosInstance.get("/users/me");
+                setUser(res.data.user);
+                localStorage.setItem("user", JSON.stringify(res.data.user));
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchMe();
+    }, [token]);
     const login = (userData, token) => {
         setUser(userData);
         setToken(token);
@@ -24,7 +46,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{ user, setUser, token, login, logout }}>
-            {children}
+            {!loading && children}
         </AuthContext.Provider>
     );
 };
